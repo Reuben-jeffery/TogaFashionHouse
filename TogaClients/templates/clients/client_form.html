@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}Client Form{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow-sm border-0" style="width: 500px;">
+    <div class="card-body">
+      <h3 class="text-center mb-4 text-primary">
+        {% if form.instance.pk %}
+          <i class="fa fa-edit me-2"></i> Edit Client
+        {% else %}
+          <i class="fa fa-user-plus me-2"></i> Add New Client
+        {% endif %}
+      </h3>
+      
+      <form method="post" novalidate>
+        {% csrf_token %}
+        
+        <!-- Render form fields with Bootstrap floating labels -->
+        {% for field in form %}
+          {% if field.name != "email" %}  <!-- Skip email field -->
+          <div class="form-floating mb-3">
+            {% render_field field class="form-control" %}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% if field.errors %}
+              <div class="text-danger small">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+        
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-success w-100">
+          <i class="fa fa-save me-1"></i> 
+          {% if form.instance.pk %} Update Client {% else %} Save Client {% endif %}
+        </button>
+      </form>
+
+      <!-- Back button -->
+      <div class="mt-3 text-center">
+        <a href="{% url 'client_list' %}" class="btn btn-secondary">
+          <i class="fa fa-arrow-left me-1"></i> Back to Clients
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

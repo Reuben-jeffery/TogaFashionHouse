@@ -1,0 +1,53 @@
+{% extends "base_auth.html" %}
+{% load static %}
+{% block content %}
+<style>
+  body {
+    background: url("{% static 'images/image.png' %}") no-repeat center center fixed;
+    background-size: cover; /* wallpaper effect */
+  }
+  .overlay {
+    background-color: rgba(0, 0, 0, 0.6); /* dim background with semi-transparent black */
+    border-radius: 8px;
+    color: #fff; /* make text readable on dark background */
+  }
+</style>
+
+<div class="d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh;">
+  
+  <!-- Logo + Name -->
+  <div class="text-center mb-4">
+    <img src="{% static 'images/image.png' %}" alt="Toga Logo" height="100">
+    <h2 class="mt-2 text-light">Toga Fashion House</h2>
+  </div>
+
+  <!-- Login Card -->
+  <div class="card shadow-sm border-0 overlay" style="width: 400px;">
+    <div class="card-body">
+      <h3 class="text-center mb-4">Login</h3>
+      <form method="post">
+        {% csrf_token %}
+        
+        <!-- Username -->
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+          <label for="username">Username</label>
+        </div>
+
+        <!-- Password -->
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+          <label for="password">Password</label>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+      </form>
+
+      <p class="text-center mt-3">
+        Don’t have an account? <a href="{% url 'register' %}" class="text-light">Register here</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

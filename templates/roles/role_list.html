@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Roles{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <!-- Page Title -->
+  <h1 class="mb-4 text-center text-dark">
+    <i class="fa fa-user-shield me-2 text-warning"></i> Roles
+  </h1>
+
+  <!-- Roles List -->
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      {% if roles %}
+        <ul class="list-group list-group-flush">
+          {% for role in roles %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ role }}
+              <a href="#" class="btn btn-sm btn-outline-warning">Manage</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">No roles available.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

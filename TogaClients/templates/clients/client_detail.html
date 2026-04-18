@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Client Detail{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4 text-dark">
+    <i class="fa fa-user me-2 text-primary"></i> {{ client.name }}
+  </h1>
+
+  <!-- Client Info -->
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <h5 class="card-title"><i class="fa fa-id-card me-2 text-info"></i> Client Information</h5>
+      <p><strong>Phone:</strong> {{ client.phone|default:"—" }}</p>
+      <p><strong>Gender:</strong> {{ client.get_gender_display|default:"—" }}</p>
+      {% if client.last_order_date %}
+        <p><strong>Last Order Date:</strong> {{ client.last_order_date|date:"Y-m-d" }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Inventories -->
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <h5 class="card-title"><i class="fa fa-boxes me-2 text-success"></i> Inventories</h5>
+      {% if inventories %}
+        <div class="table-responsive">
+          <table class="table table-sm table-striped align-middle">
+            <thead class="table-success">
+              <tr>
+                <th>Description</th>
+                <th>Amount Charged</th>
+                <th>Deposited</th>
+                <th>Balance</th>
+                <th>Paid Fully</th>
+                <th>Date Registered</th>
+                <th>View</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for inv in inventories %}
+              <tr>
+                <td>{{ inv.description }}</td>
+                <td>{{ inv.amount_charged }}</td>
+                <td>{{ inv.amount_deposited }}</td>
+                <td>{{ inv.balance }}</td>
+                <td>{% if inv.paid_fully %}✅ Yes{% else %}❌ No{% endif %}</td>
+                <td>{{ inv.date_of_registration|date:"Y-m-d" }}</td>
+                <td>
+                  <a href="{% url 'inventory_detail' inv.id %}" class="btn btn-sm btn-info">
+                    <i class="fa fa-eye"></i> View
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-muted">No inventories recorded yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Measurements -->
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <h5 class="card-title"><i class="fa fa-ruler-combined me-2 text-warning"></i> Measurements</h5>
+
+      {% if client.gender == "M" %}
+        <!-- Men’s Measurements -->
+        <h6 class="text-primary"><i class="fa fa-male me-1"></i> Men’s Measurements</h6>
+        {% if men_measurements %}
+          <div class="table-responsive mb-3">
+            <table class="table table-sm table-striped align-middle">
+              <thead class="table-primary">
+                <tr>
+                  <th>Date</th><th>Chest</th><th>Waist</th><th>Hips</th><th>Tailor</th><th>View</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for m in men_measurements %}
+                <tr>
+                  <td>{{ m.date|date:"Y-m-d" }}</td>
+                  <td>{{ m.ch|default:"—" }}</td>
+                  <td>{{ m.w|default:"—" }}</td>
+                  <td>{{ m.hip|default:"—" }}</td>
+                  <td>{{ m.tailors_name|default:"—" }}</td>
+                  <td>
+                    <a href="{% url 'measurement_detail' m.id %}" class="btn btn-sm btn-info">View</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="text-muted">No men’s measurements recorded yet.</p>
+        {% endif %}
+      {% elif client.gender == "F" %}
+        <!-- Women’s Measurements -->
+        <h6 class="text-danger"><i class="fa fa-female me-1"></i> Women’s Measurements</h6>
+        {% if women_measurements %}
+          <div class="table-responsive">
+            <table class="table table-sm table-striped align-middle">
+              <thead class="table-danger">
+                <tr>
+                  <th>Date</th><th>Bust</th><th>Waist</th><th>Hips</th><th>Tailor</th><th>View</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for w in women_measurements %}
+                <tr>
+                  <td>{{ w.date|date:"Y-m-d" }}</td>
+                  <td>{{ w.b|default:"—" }}</td>
+                  <td>{{ w.w|default:"—" }}</td>
+                  <td>{{ w.hip|default:"—" }}</td>
+                  <td>{{ w.tailors_name|default:"—" }}</td>
+                  <td>
+                    <a href="{% url 'measurement_detail' w.id %}" class="btn btn-sm btn-info">View</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="text-muted">No women’s measurements recorded yet.</p>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Back Button -->
+  <div class="text-center">
+    <a href="{% url 'client_list' %}" class="btn btn-secondary">
+      <i class="fa fa-arrow-left me-1"></i> Back to Clients
+    </a>
+  </div>
+</div>
+{% endblock %}

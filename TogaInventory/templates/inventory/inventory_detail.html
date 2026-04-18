@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Inventory Detail{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <!-- Title -->
+  <h2 class="mb-4 text-center text-primary">
+    <i class="fa fa-boxes me-2"></i> Inventory Detail
+  </h2>
+
+  <!-- Card -->
+  <div class="card shadow-sm border-0 p-4">
+    <!-- Client name prominently displayed -->
+    <h4 class="text-dark mb-3">
+      <i class="fa fa-user me-2 text-primary"></i>
+      <strong>{{ inventory.client.name }}</strong>
+    </h4>
+
+    <!-- Inventory details -->
+    <p><strong>Description:</strong> {{ inventory.description }}</p>
+    <p><strong>Amount Charged:</strong> {{ inventory.amount_charged }}</p>
+    <p><strong>Amount Deposited:</strong> {{ inventory.amount_deposited }}</p>
+    <p><strong>Deposit Date:</strong> {{ inventory.deposit_date|date:"Y-m-d" }}</p>
+    <p><strong>Balance:</strong> {{ inventory.balance }}</p>
+    <p><strong>Status:</strong> {% if inventory.paid_fully %}✅ Paid Fully{% else %}❌ Partially Paid{% endif %}</p>
+    <p><strong>Paid Fully Date:</strong> {{ inventory.paid_fully_date|date:"Y-m-d" }}</p>
+    <p><strong>Collection Date:</strong> {{ inventory.collection_date|date:"Y-m-d" }}</p>
+    <p><strong>Received By:</strong> {{ inventory.received_by|default:"—" }}</p>
+    <p><strong>Cleared By:</strong> {{ inventory.cleared_by|default:"—" }}</p>
+    <p><strong>Date Registered:</strong> {{ inventory.date_of_registration|date:"Y-m-d" }}</p>
+  </div>
+
+  <!-- Actions -->
+  <div class="mt-3 text-center">
+    <a href="{% url 'inventory_edit' inventory.id %}" class="btn btn-warning me-2">
+      <i class="fa fa-edit"></i> Edit
+    </a>
+    <a href="{% url 'inventory_list' %}" class="btn btn-secondary">
+      <i class="fa fa-arrow-left"></i> Back to List
+    </a>
+  </div>
+</div>
+{% endblock %}

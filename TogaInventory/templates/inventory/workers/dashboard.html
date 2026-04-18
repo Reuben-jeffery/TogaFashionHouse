@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="fw-bold">My Dashboard</h2>
+
+  <!-- Upcoming Due Inventories -->
+  <h4 class="mt-3">Upcoming Collections (Unpaid)</h4>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th>Collection Date</th>
+        <th>Balance</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in upcoming_due %}
+        <tr>
+          <td>{{ item.description }}</td>
+          <td>{{ item.collection_date }}</td>
+          <td>{{ item.balance }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3">No upcoming unpaid collections.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

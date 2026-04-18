@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block title %}Add Inventory{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-dark">
+      <i class="fa fa-boxes me-2 text-success"></i> Add Inventory
+    </h2>
+    <a href="{% url 'inventory_list' %}" class="btn btn-secondary">
+      <i class="fa fa-arrow-left me-1"></i> Back to Inventories
+    </a>
+  </div>
+
+  <!-- Inventory Form -->
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.errors %}
+          <div class="alert alert-danger">
+            <strong>Please correct the errors below:</strong>
+          </div>
+        {% endif %}
+
+        <!-- Client Dropdown -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Client</label>
+          {% render_field form.client class+="form-select" %}
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Description</label>
+          {% render_field form.description class+="form-control" %}
+        </div>
+
+        <!-- Phone -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Phone</label>
+          {% render_field form.phone class+="form-control" %}
+        </div>
+
+        <!-- Financials -->
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold">Amount Charged</label>
+            {% render_field form.amount_charged class+="form-control" %}
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold">Amount Deposited</label>
+            {% render_field form.amount_deposited class+="form-control" %}
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label fw-bold">Balance</label>
+            {% render_field form.balance class+="form-control" %}
+          </div>
+        </div>
+
+        <!-- Dates -->
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">Deposit Date</label>
+            {% render_field form.deposit_date type="date" class+="form-control" %}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">Collection Date</label>
+            {% render_field form.collection_date type="date" class+="form-control" %}
+          </div>
+        </div>
+
+        <!-- Personnel -->
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">Received By</label>
+            {% render_field form.received_by class+="form-control" %}
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">Cleared By</label>
+            {% render_field form.cleared_by class+="form-control" %}
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="form-check">
+              {% render_field form.paid_fully class+="form-check-input" %}
+              <label class="form-check-label fw-bold">Paid Fully?</label>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">Paid Fully Date</label>
+            {% render_field form.paid_fully_date type="date" class+="form-control" %}
+          </div>
+        </div>
+
+        <!-- Registration Date -->
+        <div class="mb-3">
+          <label class="form-label fw-bold">Date of Registration</label>
+          {% render_field form.date_of_registration type="date" class+="form-control" %}
+        </div>
+
+        <!-- Actions -->
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-success me-2">
+            <i class="fa fa-save me-1"></i> Save Inventory
+          </button>
+          <a href="{% url 'inventory_list' %}" class="btn btn-secondary">
+            <i class="fa fa-arrow-left me-1"></i> Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

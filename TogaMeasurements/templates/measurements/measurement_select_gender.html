@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Select Gender{% endblock %}
+
+{% block content %}
+<div class="container mt-4 text-center">
+  <h2 class="mb-4">Choose Measurement Type</h2>
+  
+  <div class="d-flex justify-content-center gap-4">
+    <a href="{% url 'measurement_create_men' %}" class="btn btn-primary btn-lg">
+      <i class="fa fa-male me-2"></i> Men’s Measurement
+    </a>
+    
+    <a href="{% url 'measurement_create_women' %}" class="btn btn-danger btn-lg">
+      <i class="fa fa-female me-2"></i> Women’s Measurement
+    </a>
+  </div>
+</div>
+{% endblock %}

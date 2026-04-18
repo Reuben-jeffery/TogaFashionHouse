@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <!-- Page Title -->
+  <h1 class="mb-4 text-center text-dark">
+    <i class="fa fa-tachometer-alt me-2 text-primary"></i> Admin Dashboard
+  </h1>
+
+  <!-- Stats Overview (Top Cards) -->
+  <div class="row mb-4">
+    <!-- Inventory -->
+    <div class="col-md-2">
+      <div class="card shadow-sm border-0 text-center">
+        <div class="card-body">
+          <h5 class="card-title text-info">
+            <i class="fa fa-boxes me-2"></i> Inventory
+          </h5>
+          <p class="fs-4 fw-bold">{{ inventory_per_month }}</p>
+          <a href="{% url 'inventory_list' %}" class="btn btn-info btn-sm">
+            <i class="fa fa-arrow-right me-1"></i> Go
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clients -->
+    <div class="col-md-2">
+      <div class="card shadow-sm border-0 text-center">
+        <div class="card-body">
+          <h5 class="card-title text-success">
+            <i class="fa fa-users me-2"></i> Clients
+          </h5>
+          <p class="fs-4 fw-bold">{{ clients_per_month }}</p>
+          <a href="{% url 'client_list' %}" class="btn btn-success btn-sm">
+            <i class="fa fa-arrow-right me-1"></i> Go
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Roles (Admins only) -->
+    {% if user.is_staff %}
+    <div class="col-md-2">
+      <div class="card shadow-sm border-0 text-center">
+        <div class="card-body">
+          <h5 class="card-title text-warning">
+            <i class="fa fa-user-shield me-2"></i> Roles
+          </h5>
+          <p class="fs-4 fw-bold">{{ roles }}</p>
+          <a href="{% url 'role_list' %}" class="btn btn-warning btn-sm">
+            <i class="fa fa-arrow-right me-1"></i> Go
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Measurements -->
+    <div class="col-md-2">
+      <div class="card shadow-sm border-0 text-center">
+        <div class="card-body">
+          <i class="fa fa-ruler-combined fa-2x text-primary mb-3"></i>
+          <h5 class="card-title">Measurements</h5>
+          <p class="card-text text-muted">Manage men and women measurements.</p>
+          <a href="{% url 'client_list' %}" class="btn btn-primary btn-sm">
+            <i class="fa fa-arrow-right me-1"></i> Go
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="card-title text-info"><i class="fa fa-chart-line me-2"></i> Inventory Trend</h5>
+          <canvas id="inventoryChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="card-title text-success"><i class="fa fa-chart-bar me-2"></i> Clients Growth</h5>
+          <canvas id="clientsChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+var ctx = document.getElementById('inventoryChart').getContext('2d');
+var inventoryChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: {{ inventory_labels|safe }},
+        datasets: [{
+            label: 'Inventory per Month',
+            data: {{ inventory_data|safe }},
+            borderColor: 'blue',
+            backgroundColor: 'rgba(0, 123, 255, 0.2)',
+            tension: 0.3,
+            fill: true
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { display: true } } }
+});
+
+var ctx2 = document.getElementById('clientsChart').getContext('2d');
+var clientsChart = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: {{ client_labels|safe }},
+        datasets: [{
+            label: 'Clients per Month',
+            data: {{ client_data|safe }},
+            backgroundColor: 'rgba(40, 167, 69, 0.7)'
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { display: true } } }
+});
+</script>
+{% endblock %}

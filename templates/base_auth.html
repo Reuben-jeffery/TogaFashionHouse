@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Toga Fashion House - Login</title>
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+</head>
+<body class="d-flex flex-column justify-content-center align-items-center vh-100 bg-light">
+
+  <!-- Logo + Name -->
+  <div class="text-center mb-4">
+    <img src="{% static 'images/image.png' %}" alt="Toga Logo" height="100">
+    <h2 class="mt-2">Toga Fashion House</h2>
+  </div>
+
+  <!-- Page Content -->
+  <div class="container">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+</body>
+</html>

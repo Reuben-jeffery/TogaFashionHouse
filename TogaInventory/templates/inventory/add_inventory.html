@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="fw-bold text-dark mb-4">
+    <i class="fa fa-plus text-success me-2"></i> Add Inventory
+  </h2>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          {{ form.client.label_tag }}
+          {{ form.client }}
+        </div>
+        <div class="mb-3">
+          {{ form.description.label_tag }}
+          {{ form.description }}
+        </div>
+        <div class="mb-3">
+          {{ form.amount_charged.label_tag }}
+          {{ form.amount_charged }}
+        </div>
+        <div class="mb-3">
+          {{ form.amount_deposited.label_tag }}
+          {{ form.amount_deposited }}
+        </div>
+        <div class="mb-3">
+          {{ form.balance.label_tag }}
+          {{ form.balance }}
+        </div>
+        <div class="mb-3">
+          {{ form.paid_fully.label_tag }}
+          {{ form.paid_fully }}
+        </div>
+        <div class="mb-3">
+          {{ form.date_of_registration.label_tag }}
+          {{ form.date_of_registration }}
+        </div>
+
+        <button type="submit" class="btn btn-success">
+          <i class="fa fa-save me-1"></i> Save Inventory
+        </button>
+        <a href="{% url 'inventory_list' %}" class="btn btn-secondary ms-2">
+          Cancel
+        </a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

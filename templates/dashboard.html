@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <!-- Logo + Name Heading -->
+  <div class="d-flex justify-content-center align-items-center mb-4">
+    <img src="{% static 'images/image.png' %}" alt="Toga Logo" height="60" class="me-3">
+    <h1 class="text-dark mb-0">Toga Fashion House</h1>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row g-4">
+    <!-- Clients Card -->
+    <div class="col-md-4">
+      <a href="{% url 'client_list' %}" class="text-decoration-none">
+        <div class="card shadow-sm border-0 text-center h-100">
+          <div class="card-body">
+            <i class="fa fa-users fa-2x text-primary"></i>
+            <h6 class="mt-2 text-muted">Clients</h6>
+            <h3 class="fw-bold">{{ client_count }}</h3>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Inventory Card -->
+    <div class="col-md-4">
+      <a href="{% url 'inventory_list' %}" class="text-decoration-none">
+        <div class="card shadow-sm border-0 text-center h-100">
+          <div class="card-body">
+            <i class="fa fa-box fa-2x text-warning"></i>
+            <h6 class="mt-2 text-muted">Inventory Records</h6>
+            <h3 class="fw-bold">{{ inventory_count }}</h3>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Measurements Card -->
+    <div class="col-md-4">
+      <a href="{% url 'measurement_list' %}" class="text-decoration-none">
+        <div class="card shadow-sm border-0 text-center h-100">
+          <div class="card-body">
+            <i class="fa fa-ruler-combined fa-2x text-info"></i>
+            <h6 class="mt-2 text-muted">Measurements</h6>
+            <h3 class="fw-bold">{{ measurement_count }}</h3>
+            <p class="small text-muted mb-0">
+              Men: {{ men_measurement_count }} | Women: {{ women_measurement_count }}
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="row mt-5">
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="card-title">Inventories per Client</h5>
+          <canvas id="inventoriesChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="card-title">Inventory Levels</h5>
+          <canvas id="inventoryChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js Scripts -->
+<script>
+  // Inventories per Client Chart
+  const inventoriesCtx = document.getElementById('inventoriesChart').getContext('2d');
+  new Chart(inventoriesCtx, {
+    type: 'line',
+    data: {
+      labels: {{ chart_labels|safe }},
+      datasets: [{
+        label: 'Inventories',
+        data: {{ chart_data|safe }},
+        borderColor: '#0d6efd',
+        backgroundColor: 'rgba(13,110,253,0.2)',
+        fill: true,
+        tension: 0.3
+      }]
+    }
+  });
+
+  // Inventory Chart
+  const inventoryCtx = document.getElementById('inventoryChart').getContext('2d');
+  new Chart(inventoryCtx, {
+    type: 'bar',
+    data: {
+      labels: {{ inventory_labels|safe }},
+      datasets: [{
+        label: 'Quantity',
+        data: {{ inventory_counts|safe }},
+        backgroundColor: '#ffc107'
+      }]
+    }
+  });
+</script>
+{% endblock %}
