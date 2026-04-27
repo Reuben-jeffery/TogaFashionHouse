@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% load humanize %}
 {% block title %}Inventory Detail{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
+
   <!-- Title -->
   <h2 class="mb-4 text-center text-primary">
     <i class="fa fa-boxes me-2"></i> Inventory Detail
@@ -16,18 +18,32 @@
       <strong>{{ inventory.client.name }}</strong>
     </h4>
 
-    <!-- Inventory details -->
+    <!-- Description -->
     <p><strong>Description:</strong> {{ inventory.description }}</p>
-    <p><strong>Amount Charged:</strong> {{ inventory.amount_charged }}</p>
-    <p><strong>Amount Deposited:</strong> {{ inventory.amount_deposited }}</p>
+
+    <!-- Financials -->
+    <p><strong>Amount Charged:</strong> ₦{{ inventory.amount_charged|floatformat:2|intcomma }}</p>
+    <p><strong>Amount Deposited:</strong> ₦{{ inventory.amount_deposited|floatformat:2|intcomma }}</p>
+    <p><strong>Balance:</strong> ₦{{ inventory.balance|floatformat:2|intcomma }}</p>
+
+    <!-- Status -->
+    <p><strong>Status:</strong>
+      {% if inventory.balance == 0 %}
+        <span class="badge bg-success">Paid Fully</span>
+      {% else %}
+        <span class="badge bg-warning text-dark">Pending</span>
+      {% endif %}
+    </p>
+
+    <!-- Dates -->
     <p><strong>Deposit Date:</strong> {{ inventory.deposit_date|date:"Y-m-d" }}</p>
-    <p><strong>Balance:</strong> {{ inventory.balance }}</p>
-    <p><strong>Status:</strong> {% if inventory.paid_fully %}✅ Paid Fully{% else %}❌ Partially Paid{% endif %}</p>
     <p><strong>Paid Fully Date:</strong> {{ inventory.paid_fully_date|date:"Y-m-d" }}</p>
     <p><strong>Collection Date:</strong> {{ inventory.collection_date|date:"Y-m-d" }}</p>
+    <p><strong>Date Registered:</strong> {{ inventory.date_of_registration|date:"Y-m-d" }}</p>
+
+    <!-- Personnel -->
     <p><strong>Received By:</strong> {{ inventory.received_by|default:"—" }}</p>
     <p><strong>Cleared By:</strong> {{ inventory.cleared_by|default:"—" }}</p>
-    <p><strong>Date Registered:</strong> {{ inventory.date_of_registration|date:"Y-m-d" }}</p>
   </div>
 
   <!-- Actions -->

@@ -12,7 +12,8 @@ class MenMeasurement(models.Model):
     r_slv = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True) # Round Sleeve
     tl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Top Length
     hip = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    tom_cuff = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    tom = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    cuff = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     w = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)    # Waist
     kn = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Knee
     ft = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Foot

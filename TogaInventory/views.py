@@ -10,12 +10,14 @@ from datetime import timedelta
 
 @login_required
 def inventory_list(request):
+    # Show all inventories with related client data
     inventories = Inventory.objects.select_related('client').all()
     return render(request, 'inventory/inventory_list.html', {'inventories': inventories})
 
 
 @login_required
 def inventory_detail(request, inventory_id):
+    # Single inventory detail view
     inventory = get_object_or_404(Inventory, id=inventory_id)
     return render(request, 'inventory/inventory_detail.html', {'inventory': inventory})
 
@@ -26,7 +28,7 @@ def add_inventory(request):
         form = InventoryForm(request.POST)
         if form.is_valid():
             inventory = form.save(commit=False)
-            inventory.created_by = request.user  # tie to worker
+            inventory.created_by = request.user
             inventory.save()
             messages.success(request, "Inventory record created successfully!")
             return redirect("inventory_detail", inventory_id=inventory.id)
@@ -35,7 +37,7 @@ def add_inventory(request):
     else:
         form = InventoryForm()
 
-    return render(request, "inventory/add_inventory.html", {"form": form})
+    return render(request, "inventory/inventory_form.html", {"form": form})
 
 
 @login_required

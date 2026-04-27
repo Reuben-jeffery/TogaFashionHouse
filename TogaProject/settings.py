@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'TogaMeasurements',
     'auditlog',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [

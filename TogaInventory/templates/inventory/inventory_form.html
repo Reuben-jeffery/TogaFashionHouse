@@ -48,16 +48,25 @@
         <!-- Financials -->
         <div class="row">
           <div class="col-md-4 mb-3">
-            <label class="form-label fw-bold">Amount Charged</label>
-            {% render_field form.amount_charged class+="form-control" %}
+            <label class="form-label fw-bold">Amount Charged (₦)</label>
+            <div class="input-group">
+              <span class="input-group-text">₦</span>
+              {% render_field form.amount_charged class+="form-control currency-input" %}
+            </div>
           </div>
           <div class="col-md-4 mb-3">
-            <label class="form-label fw-bold">Amount Deposited</label>
-            {% render_field form.amount_deposited class+="form-control" %}
+            <label class="form-label fw-bold">Amount Deposited (₦)</label>
+            <div class="input-group">
+              <span class="input-group-text">₦</span>
+              {% render_field form.amount_deposited class+="form-control currency-input" %}
+            </div>
           </div>
           <div class="col-md-4 mb-3">
-            <label class="form-label fw-bold">Balance</label>
-            {% render_field form.balance class+="form-control" %}
+            <label class="form-label fw-bold">Balance (₦)</label>
+            <div class="input-group">
+              <span class="input-group-text">₦</span>
+              {% render_field form.balance class+="form-control currency-input" %}
+            </div>
           </div>
         </div>
 
@@ -119,4 +128,19 @@
   </div>
 
 </div>
+
+<!-- JavaScript: format only on blur, not while typing -->
+<script>
+document.querySelectorAll('.currency-input').forEach(function(input) {
+  input.addEventListener('blur', function(e) {
+    let value = e.target.value.replace(/,/g, '');
+    if (!isNaN(value) && value !== '') {
+      e.target.value = new Intl.NumberFormat('en-NG', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
+    }
+  });
+});
+</script>
 {% endblock %}

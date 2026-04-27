@@ -19,31 +19,60 @@ def measurement_select_gender(request):
 # ---------------------------
 # CREATE MEN MEASUREMENT
 # ---------------------------
-
 @login_required
 def measurement_create_men(request):
     if request.method == "POST":
-        form = MenMeasurementForm(request.POST)
-        if form.is_valid():
-            measurement = form.save()
-            messages.success(request, "Men’s measurement added successfully!")
+        client_form = ClientForm(request.POST)
+        measurement_form = MenMeasurementForm(request.POST)
+
+        if client_form.is_valid() and measurement_form.is_valid():
+            client = client_form.save()
+            measurement = measurement_form.save(commit=False)
+            measurement.client = client
+            measurement.save()
+            messages.success(request, "Men’s measurement and client saved successfully!")
             return redirect("measurement_list")
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
-        form = MenMeasurementForm()
-    return render(request, "measurements/measurement_form.html", {"form": form, "gender": "men"})
+        client_form = ClientForm()
+        measurement_form = MenMeasurementForm()
+
+    return render(request, "measurements/measurement_form.html", {
+        "client_form": client_form,
+        "form": measurement_form,
+        "gender": "men",
+    })
 
 
+# ---------------------------
+# CREATE WOMEN MEASUREMENT
+# ---------------------------
 @login_required
 def measurement_create_women(request):
     if request.method == "POST":
-        form = WomenMeasurementForm(request.POST)
-        if form.is_valid():
-            measurement = form.save()
-            messages.success(request, "Women’s measurement added successfully!")
+        client_form = ClientForm(request.POST)
+        measurement_form = WomenMeasurementForm(request.POST)
+
+        if client_form.is_valid() and measurement_form.is_valid():
+            client = client_form.save()
+            measurement = measurement_form.save(commit=False)
+            measurement.client = client
+            measurement.save()
+            messages.success(request, "Women’s measurement and client saved successfully!")
             return redirect("measurement_list")
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
-        form = WomenMeasurementForm()
-    return render(request, "measurements/measurement_form.html", {"form": form, "gender": "women"})
+        client_form = ClientForm()
+        measurement_form = WomenMeasurementForm()
+
+    return render(request, "measurements/measurement_form.html", {
+        "client_form": client_form,
+        "form": measurement_form,
+        "gender": "women",
+    })
+
 
 # ---------------------------
 # EDIT MEASUREMENT
@@ -110,14 +139,17 @@ def measurement_delete(request, measurement_id):
 # ---------------------------
 @login_required
 def measurement_list(request):
-    men_measurements = MenMeasurement.objects.all()
-    women_measurements = WomenMeasurement.objects.all()
+    men_measurements = MenMeasurement.objects.select_related("client").all()
+    women_measurements = WomenMeasurement.objects.select_related("client").all()
     return render(request, "measurements/measurement_list.html", {
         "men_measurements": men_measurements,
         "women_measurements": women_measurements,
     })
 
 
+# ---------------------------
+# MEASUREMENT DETAIL
+# ---------------------------
 @login_required
 def measurement_detail(request, measurement_id):
     try:
@@ -125,7 +157,7 @@ def measurement_detail(request, measurement_id):
     except MenMeasurement.DoesNotExist:
         measurement = get_object_or_404(WomenMeasurement, id=measurement_id)
 
-    # Build a list of (verbose_name, value) pairs
+    # Build a list of (verbose_name, value) pairs for display
     fields = []
     for field in measurement._meta.fields:
         if field.name not in ["id", "client"]:
@@ -135,4 +167,3 @@ def measurement_detail(request, measurement_id):
         'measurement': measurement,
         'fields': fields,
     })
-

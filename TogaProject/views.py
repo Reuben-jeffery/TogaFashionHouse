@@ -46,7 +46,8 @@ def dashboard(request):
         total_deposits=Sum('inventories__amount_deposited')
     )
     payments_labels = [client.name for client in payments_per_client]
-    payments_data = [client.total_deposits or 0 for client in payments_per_client]
+    # Convert Decimal → float to avoid JSON serialization error
+    payments_data = [float(client.total_deposits or 0) for client in payments_per_client]
 
     context = {
         'client_count': client_count,

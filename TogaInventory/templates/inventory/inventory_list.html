@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% load humanize %}
+{% block title %}Inventory List{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
 
@@ -7,7 +10,7 @@
     <h2 class="fw-bold text-dark">
       <i class="fa fa-boxes me-2 text-success"></i> Inventories
     </h2>
-    <a href="{% url 'add_inventory' %}" class="btn btn-success">
+    <a href="{% url 'inventory_add' %}" class="btn btn-success">
       <i class="fa fa-plus me-1"></i> Add Inventory
     </a>
   </div>
@@ -45,14 +48,14 @@
               <tr>
                 <td><strong>{{ inv.client.name }}</strong></td>
                 <td>{{ inv.description }}</td>
-                <td>{{ inv.amount_charged }}</td>
-                <td>{{ inv.amount_deposited }}</td>
-                <td>{{ inv.balance }}</td>
+                <td>₦{{ inv.amount_charged|floatformat:2|intcomma }}</td>
+                <td>₦{{ inv.amount_deposited|floatformat:2|intcomma }}</td>
+                <td>₦{{ inv.balance|floatformat:2|intcomma }}</td>
                 <td>
                   {% if inv.balance == 0 %}
                     <span class="badge bg-success">Paid</span>
                   {% else %}
-                    <span class="badge bg-warning">Pending</span>
+                    <span class="badge bg-warning text-dark">Pending</span>
                   {% endif %}
                 </td>
                 <td>{{ inv.date_of_registration|date:"Y-m-d" }}</td>
