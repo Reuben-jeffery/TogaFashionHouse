@@ -1,8 +1,11 @@
 {% extends "base.html" %}
+{% load humanize %}
 {% load static %}
+{% block title %}Worker Dashboard{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
+
   <!-- Logo + Name Heading -->
   <div class="d-flex justify-content-center align-items-center mb-4">
     <img src="{% static 'images/image.png' %}" alt="Toga Logo" height="60" class="me-3">
@@ -53,6 +56,35 @@
       </a>
     </div>
   </div>
+
+  <!-- Upcoming Due Inventories -->
+  {% if upcoming_due %}
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="card-title text-danger">
+            <i class="fa fa-exclamation-circle me-2"></i> Upcoming Collections (Unpaid)
+          </h5>
+          <ul class="list-group list-group-flush">
+            {% for inv in upcoming_due %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                  <strong>{{ inv.client.name }}</strong> — {{ inv.description }}
+                  <br>
+                  <small class="text-muted">Collection: {{ inv.collection_date|date:"Y-m-d" }}</small>
+                </span>
+                <span class="badge bg-warning text-dark">
+                  Balance: ₦{{ inv.balance|floatformat:2|intcomma }}
+                </span>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
 
   <!-- Charts Section -->
   <div class="row mt-5">

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load humanize %}
 {% load widget_tweaks %}
 {% block title %}Add Inventory{% endblock %}
 
@@ -21,9 +22,9 @@
       <form method="post" novalidate>
         {% csrf_token %}
 
-        {% if form.errors %}
+        {% if form.non_field_errors %}
           <div class="alert alert-danger">
-            <strong>Please correct the errors below:</strong>
+            <strong>{{ form.non_field_errors }}</strong>
           </div>
         {% endif %}
 
@@ -31,18 +32,27 @@
         <div class="mb-3">
           <label class="form-label fw-bold">Client</label>
           {% render_field form.client class+="form-select" %}
+          {% for error in form.client.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
         </div>
 
         <!-- Description -->
         <div class="mb-3">
           <label class="form-label fw-bold">Description</label>
           {% render_field form.description class+="form-control" %}
+          {% for error in form.description.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
         </div>
 
         <!-- Phone -->
         <div class="mb-3">
           <label class="form-label fw-bold">Phone</label>
           {% render_field form.phone class+="form-control" %}
+          {% for error in form.phone.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
         </div>
 
         <!-- Financials -->
@@ -53,6 +63,9 @@
               <span class="input-group-text">₦</span>
               {% render_field form.amount_charged class+="form-control currency-input" %}
             </div>
+            {% for error in form.amount_charged.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
           </div>
           <div class="col-md-4 mb-3">
             <label class="form-label fw-bold">Amount Deposited (₦)</label>
@@ -60,6 +73,9 @@
               <span class="input-group-text">₦</span>
               {% render_field form.amount_deposited class+="form-control currency-input" %}
             </div>
+            {% for error in form.amount_deposited.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
           </div>
           <div class="col-md-4 mb-3">
             <label class="form-label fw-bold">Balance (₦)</label>
@@ -67,6 +83,9 @@
               <span class="input-group-text">₦</span>
               {% render_field form.balance class+="form-control currency-input" %}
             </div>
+            {% for error in form.balance.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
           </div>
         </div>
 
@@ -75,10 +94,16 @@
           <div class="col-md-6 mb-3">
             <label class="form-label fw-bold">Deposit Date</label>
             {% render_field form.deposit_date type="date" class+="form-control" %}
+            {% for error in form.deposit_date.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label fw-bold">Collection Date</label>
             {% render_field form.collection_date type="date" class+="form-control" %}
+            {% for error in form.collection_date.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
           </div>
         </div>
 
@@ -87,10 +112,16 @@
           <div class="col-md-6 mb-3">
             <label class="form-label fw-bold">Received By</label>
             {% render_field form.received_by class+="form-control" %}
+            {% for error in form.received_by.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label fw-bold">Cleared By</label>
             {% render_field form.cleared_by class+="form-control" %}
+            {% for error in form.cleared_by.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
           </div>
         </div>
 
@@ -101,10 +132,16 @@
               {% render_field form.paid_fully class+="form-check-input" %}
               <label class="form-check-label fw-bold">Paid Fully?</label>
             </div>
+            {% for error in form.paid_fully.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
           </div>
           <div class="col-md-6 mb-3">
             <label class="form-label fw-bold">Paid Fully Date</label>
             {% render_field form.paid_fully_date type="date" class+="form-control" %}
+            {% for error in form.paid_fully_date.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
           </div>
         </div>
 
@@ -112,6 +149,9 @@
         <div class="mb-3">
           <label class="form-label fw-bold">Date of Registration</label>
           {% render_field form.date_of_registration type="date" class+="form-control" %}
+          {% for error in form.date_of_registration.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
         </div>
 
         <!-- Actions -->
@@ -129,17 +169,28 @@
 
 </div>
 
-<!-- JavaScript: format only on blur, not while typing -->
+<!-- JavaScript: format existing values on load + on blur -->
 <script>
-document.querySelectorAll('.currency-input').forEach(function(input) {
-  input.addEventListener('blur', function(e) {
-    let value = e.target.value.replace(/,/g, '');
-    if (!isNaN(value) && value !== '') {
-      e.target.value = new Intl.NumberFormat('en-NG', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(value);
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll('.currency-input').forEach(function(input) {
+    if (input.value) {
+      let value = input.value.replace(/,/g, '');
+      if (!isNaN(value) && value !== '') {
+        input.value = new Intl.NumberFormat('en-NG', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(value);
+      }
     }
+    input.addEventListener('blur', function(e) {
+      let value = e.target.value.replace(/,/g, '');
+      if (!isNaN(value) && value !== '') {
+        e.target.value = new Intl.NumberFormat('en-NG', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(value);
+      }
+    });
   });
 });
 </script>

@@ -1,0 +1,23 @@
+# Core framework
+Django==5.0.4
+
+# Audit logging
+django-auditlog==2.3.0
+
+# Database drivers (pick one depending on production setup)
+psycopg2-binary==2.9.9   # PostgreSQL
+mysqlclient==2.2.4       # MySQL
+
+# Frontend helpers
+django-humanize==0.1.2   # For intcomma, floatformat, etc.
+
+# Utilities
+python-decouple==3.8     # For environment variable management
+gunicorn==21.2.0         # WSGI server for deployment
+
+# Optional (if you use crispy forms or similar)
+django-crispy-forms==2.1
+
+# Development tools
+black==24.4.2            # Code formatter
+flake8==7.1.0            # Linting

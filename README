@@ -1,0 +1,90 @@
+Toga Fashion House Inventory Management System
+A Django‑based application for managing clients, inventory records, deposits, and staff accountability at Toga Fashion House.
+This system streamlines financial tracking, deposit history, and payment status updates, ensuring clarity and efficiency for both staff and management.
+
+🚀 Features
+Client Management: Register and manage client records.
+
+Inventory Tracking: Record materials, charges, deposits, balances, and collection dates.
+
+Deposit Management: Add multiple deposits per inventory item with automatic balance updates.
+
+Payment Status: Auto‑update “Paid Fully” status and date when balance reaches zero.
+
+Audit Logging: Track changes to inventory records for accountability.
+
+User Roles: Separate dashboards for users and admins.
+
+Responsive UI: Clean Bootstrap 5 interface with fixed navigation bar.
+
+🛠️ Tech Stack
+Backend: Django (Python)
+
+Frontend: Bootstrap 5, FontAwesome
+
+Database: SQLite (default) or PostgreSQL/MySQL (recommended for production)
+
+Audit Logging: django‑auditlog
+
+Authentication: Django’s built‑in user system
+
+⚙️ Installation
+Clone the repository
+
+bash
+git clone https://github.com/yourusername/toga-fashion-house.git
+cd toga-fashion-house
+Create and activate a virtual environment
+
+bash
+python -m venv venv
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
+Install dependencies
+
+bash
+pip install -r requirements.txt
+Run migrations
+
+bash
+python manage.py migrate
+Create a superuser
+
+bash
+python manage.py createsuperuser
+Collect static files
+
+bash
+python manage.py collectstatic
+Start the development server
+
+bash
+python manage.py runserver
+📖 Usage
+Log in via the dashboard.
+
+Add clients and create inventory records.
+
+Record deposits; balances update automatically.
+
+View deposit history and payment status.
+
+Use the admin dashboard for full control.
+
+🔒 Deployment Checklist
+Set DEBUG = False in settings.py.
+
+Configure ALLOWED_HOSTS with your domain/IP.
+
+Use a production database (PostgreSQL/MySQL).
+
+Set up a proper web server (Gunicorn + Nginx recommended).
+
+Configure static files with collectstatic.
+
+Secure with HTTPS (SSL certificate).
+
+👥 Contributors
+Jeffery – Project Owner & Developer
+
+Team members at Toga Fashion House
