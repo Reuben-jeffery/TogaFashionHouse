@@ -1,1 +1,1 @@
-web: gunicorn togaproject.wsgi:application
+web: gunicorn TogaProject.wsgi:application
