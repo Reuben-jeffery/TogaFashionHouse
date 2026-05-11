@@ -3,6 +3,7 @@ from django.utils import timezone
 from TogaClients.models import Client
 from auditlog.registry import auditlog
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
 
 class Inventory(models.Model):
@@ -29,11 +30,10 @@ class Inventory(models.Model):
         verbose_name="Date of Registration"
     )
 
-    # Contact (optional, since client already has phone)
+    # Contact (optional)
     phone = models.CharField(
         max_length=20,
-        blank=True,
-        null=True,
+        blank=True, null=True,
         verbose_name="Phone Number",
         help_text="Optional contact number for this inventory record"
     )
@@ -113,19 +113,26 @@ class Inventory(models.Model):
 
     def update_deposit_summary(self):
         """
-        Recalculate deposits and balance whenever a new deposit is added.
+        Recalculate deposits and balance whenever a new deposit is added
+        or when paid_fully is toggled.
         """
-        total = sum(d.amount for d in self.deposits.all())
+        total = self.deposits.aggregate(Sum('amount'))['amount__sum'] or 0
         self.amount_deposited = total
-        self.balance = self.amount_charged - total
 
-        if self.balance <= 0:
-            self.paid_fully = True
+        # If marked paid fully, override balance logic
+        if self.paid_fully:
+            self.balance = 0
             if not self.paid_fully_date:
                 self.paid_fully_date = timezone.now()
         else:
-            self.paid_fully = False
-            self.paid_fully_date = None
+            self.balance = self.amount_charged - total
+            if self.balance <= 0:
+                self.paid_fully = True
+                if not self.paid_fully_date:
+                    self.paid_fully_date = timezone.now()
+            else:
+                self.paid_fully = False
+                self.paid_fully_date = None
 
         self.save()
 
@@ -146,6 +153,11 @@ class Deposit(models.Model):
 
     def __str__(self):
         return f"{self.inventory.client} - ₦{self.amount} on {self.date}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # After saving deposit, update inventory totals
+        self.inventory.update_deposit_summary()
 
 
 # 🔒 Track changes with auditlog

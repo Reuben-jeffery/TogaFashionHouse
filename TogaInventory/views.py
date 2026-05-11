@@ -39,16 +39,9 @@ def add_inventory(request):
         if form.is_valid():
             inventory = form.save(commit=False)
             inventory.created_by = request.user
-
-            # Auto-calculate balance using cleaned data
-            inventory.balance = inventory.amount_charged - inventory.amount_deposited
-
-            # Update paid_fully flag if balance is zero
-            if inventory.balance <= 0:
-                inventory.paid_fully = True
-                inventory.paid_fully_date = timezone.now()
-
             inventory.save()
+            inventory.update_deposit_summary()  # unify balance + paid_fully logic
+
             messages.success(request, "Inventory record created successfully!")
             return redirect("inventory_detail", inventory_id=inventory.id)
         else:
@@ -67,20 +60,9 @@ def inventory_edit(request, inventory_id):
         form = InventoryForm(request.POST, instance=inventory)
         if form.is_valid():
             inventory = form.save(commit=False)
-
-            # Recalculate balance using cleaned data
-            inventory.balance = inventory.amount_charged - inventory.amount_deposited
-
-            # Update paid_fully flag if balance is zero
-            if inventory.balance <= 0:
-                inventory.paid_fully = True
-                if not inventory.paid_fully_date:
-                    inventory.paid_fully_date = timezone.now()
-            else:
-                inventory.paid_fully = False
-                inventory.paid_fully_date = None
-
             inventory.save()
+            inventory.update_deposit_summary()  # unify balance + paid_fully logic
+
             messages.success(request, "Inventory record updated successfully!")
             return redirect('inventory_detail', inventory_id=inventory.id)
         else:
@@ -100,6 +82,7 @@ def inventory_mark_paid(request, inventory_id):
     inventory = get_object_or_404(Inventory, id=inventory_id)
     inventory.paid_fully = True
     inventory.paid_fully_date = timezone.now()
+    inventory.amount_deposited = inventory.amount_charged
     inventory.balance = 0
     inventory.save()
     messages.success(request, "Inventory marked as Paid Fully.")
@@ -152,10 +135,7 @@ def add_deposit(request, inventory_id):
         if form.is_valid():
             deposit = form.save(commit=False)
             deposit.inventory = inventory
-            deposit.save()
-
-            # Update inventory totals
-            inventory.update_deposit_summary()
+            deposit.save()  # triggers inventory.update_deposit_summary() via Deposit.save()
 
             messages.success(request, "Deposit recorded successfully!")
             return redirect("inventory_detail", inventory_id=inventory.id)

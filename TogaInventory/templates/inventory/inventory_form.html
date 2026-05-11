@@ -56,37 +56,15 @@
         </div>
 
         <!-- Financials -->
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <label class="form-label fw-bold">Amount Charged (₦)</label>
-            <div class="input-group">
-              <span class="input-group-text">₦</span>
-              {% render_field form.amount_charged class+="form-control currency-input" %}
-            </div>
-            {% for error in form.amount_charged.errors %}
-              <div class="text-danger small">{{ error }}</div>
-            {% endfor %}
+        <div class="mb-3">
+          <label class="form-label fw-bold">Amount Charged (₦)</label>
+          <div class="input-group">
+            <span class="input-group-text">₦</span>
+            {% render_field form.amount_charged class+="form-control currency-input" %}
           </div>
-          <div class="col-md-4 mb-3">
-            <label class="form-label fw-bold">Amount Deposited (₦)</label>
-            <div class="input-group">
-              <span class="input-group-text">₦</span>
-              {% render_field form.amount_deposited class+="form-control currency-input" %}
-            </div>
-            {% for error in form.amount_deposited.errors %}
-              <div class="text-danger small">{{ error }}</div>
-            {% endfor %}
-          </div>
-          <div class="col-md-4 mb-3">
-            <label class="form-label fw-bold">Balance (₦)</label>
-            <div class="input-group">
-              <span class="input-group-text">₦</span>
-              {% render_field form.balance class+="form-control currency-input" %}
-            </div>
-            {% for error in form.balance.errors %}
-              <div class="text-danger small">{{ error }}</div>
-            {% endfor %}
-          </div>
+          {% for error in form.amount_charged.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
         </div>
 
         <!-- Dates -->
@@ -169,7 +147,7 @@
 
 </div>
 
-<!-- JavaScript: format existing values on load + on blur -->
+<!-- JavaScript: format currency inputs -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   document.querySelectorAll('.currency-input').forEach(function(input) {

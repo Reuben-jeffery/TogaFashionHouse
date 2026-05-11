@@ -35,6 +35,7 @@
             <i class="fa fa-box fa-2x text-warning"></i>
             <h6 class="mt-2 text-muted">Inventory Records</h6>
             <h3 class="fw-bold">{{ inventory_count }}</h3>
+            <p class="small text-muted mb-0">Unpaid: {{ upcoming_due.count }}</p>
           </div>
         </div>
       </a>
@@ -74,8 +75,23 @@
                   <br>
                   <small class="text-muted">Collection: {{ inv.collection_date|date:"Y-m-d" }}</small>
                 </span>
-                <span class="badge bg-warning text-dark">
-                  Balance: ₦{{ inv.balance|floatformat:2|intcomma }}
+                <span>
+                  {% if inv.paid_fully %}
+                    <span class="badge bg-success">Paid Fully</span>
+                  {% elif inv.amount_deposited > 0 %}
+                    <span class="badge bg-info text-dark">Partially Paid</span>
+                  {% else %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                  {% endif %}
+                  <span class="badge bg-danger ms-2">
+                    Balance: ₦{{ inv.balance|floatformat:2|intcomma }}
+                  </span>
+                  <a href="{% url 'inventory_detail' inv.id %}" class="btn btn-sm btn-outline-primary ms-2">
+                    View
+                  </a>
+                  <a href="{% url 'inventory_mark_paid' inv.id %}" class="btn btn-sm btn-outline-success ms-2">
+                    Mark Paid
+                  </a>
                 </span>
               </li>
             {% endfor %}
@@ -136,7 +152,7 @@
       datasets: [{
         label: 'Quantity',
         data: {{ inventory_counts|safe }},
-        backgroundColor: '#ffc107'
+        backgroundColor: ['#198754', '#0dcaf0', '#ffc107'] // green, blue, orange
       }]
     }
   });
