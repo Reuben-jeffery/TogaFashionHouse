@@ -20,6 +20,10 @@ from django.contrib.auth import views as auth_views
 from TogaClients import views as client_views
 from TogaProject import views as project_views
 from . import views
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,5 +45,8 @@ urlpatterns = [
     # Roles
     path("roles/", project_views.role_list, name="role_list"),
     path("worker/dashboard/", views.worker_dashboard, name="worker_dashboard"),
+    
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 

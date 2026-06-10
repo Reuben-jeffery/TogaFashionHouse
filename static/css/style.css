@@ -1,42 +1,108 @@
+/* ==========================================================================
+   Toga Fashion House - Master Architectural Styling System Framework
+   ========================================================================== */
+
+/* Global Foundations & Luxury Canvas Configuration Reset */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    margin: 20px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #fbfaf8; /* Warm luxe stone workspace foundation */
+    color: #111111;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
+/* Base Layout Constraints Framework Override */
+.max-width-container {
+    max-width: 1200px;
+    width: 100%;
+}
+
+/* ==========================================================================
+   Atelier Navigation Bar Engine Rules
+   ========================================================================== */
 nav {
-    background-color: #333;
-    padding: 10px;
+    background-color: #ffffff; /* Replaced aggressive dark slate with crisp editorial white */
+    border-bottom: 1px solid rgba(17, 17, 17, 0.06);
+    padding: 1.15rem 2rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 12px rgba(34, 32, 30, 0.015);
 }
 
 nav a {
-    color: white;
-    margin-right: 15px;
+    color: #5c5552; /* Monochromatic dark neutral instead of raw black or white */
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px; /* Clean tracking across menu options */
+    margin-right: 2rem;
     text-decoration: none;
+    transition: color 0.2s cubic-bezier(0.215, 0.610, 0.355, 1);
 }
 
 nav a:hover {
-    text-decoration: underline;
+    color: #111111;
+    text-decoration: none; /* Replaced dated browser underlining style with crisp transitions */
 }
 
+/* Contextual Active State Highlighting for Navigation Options */
+nav a.active {
+    color: #111111;
+    position: relative;
+}
+
+nav a.active::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 12px;
+    height: 1.5px;
+    background-color: #111111;
+}
+
+/* ==========================================================================
+   Django Global Messages Feedback Notification Alerts System
+   ========================================================================== */
 .messages {
     list-style-type: none;
     padding: 0;
+    margin: 1.5rem auto;
+    max-width: 1200px;
+    width: 100%;
 }
 
 .messages li {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    font-weight: bold;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    display: d-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
 }
 
+/* Contextual Success Notifications Layout */
 .messages li.success {
-    background-color: #d4edda;
-    color: #155724;
+    background-color: #f2fbf5; /* Subdued, premium editorial green */
+    color: #146c36;
+    border: 1px solid rgba(20, 108, 54, 0.12);
 }
 
+/* Contextual Error / Warning Notifications Layout */
 .messages li.error {
-    background-color: #f8d7da;
-    color: #721c24;
+    background-color: #fff6f6; /* Subdued, crisp soft crimson surface */
+    color: #b92525;
+    border: 1px solid rgba(185, 37, 37, 0.1);
+}
+
+/* Contextual Informational System Logs Layout */
+.messages li.info {
+    background-color: #f4f8fa;
+    color: #1d6587;
+    border: 1px solid rgba(29, 101, 135, 0.1);
 }

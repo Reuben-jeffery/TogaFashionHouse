@@ -1,30 +1,67 @@
 {% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Worker Console — Toga Fashion House{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2 class="fw-bold">My Dashboard</h2>
+<div class="container py-5">
 
-  <!-- Upcoming Due Inventories -->
-  <h4 class="mt-3">Upcoming Collections (Unpaid)</h4>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Description</th>
-        <th>Collection Date</th>
-        <th>Balance</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in upcoming_due %}
-        <tr>
-          <td>{{ item.description }}</td>
-          <td>{{ item.collection_date }}</td>
-          <td>{{ item.balance }}</td>
-        </tr>
-      {% empty %}
-        <tr><td colspan="3">No upcoming unpaid collections.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center border-bottom pb-4 mb-4">
+        <div>
+            <span class="text-uppercase tracking-wider small d-block" style="letter-spacing: 1.5px; font-weight: 600; color: #8c857e;">
+                Worker Operational Console
+            </span>
+            <h1 class="h2 text-black font-bold m-0 mt-1">My Assigned Orders</h1>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-0">
+            {% if inventories %}
+                <div class="table-responsive">
+                    <table class="table align-middle border-0 m-0" style="font-size: 0.9rem;">
+                        <thead>
+                            <tr style="background-color: #fcfcfc; border-bottom: 2px solid var(--bs-gray-200); font-size: 0.75rem; text-transform: uppercase; color: var(--bs-gray-600);">
+                                <th class="ps-4 py-3">Client</th>
+                                <th class="py-3">Description</th>
+                                <th class="py-3 text-center">Collection Date</th>
+                                <th class="py-3 text-end">Balance Due</th>
+                                <th class="py-3 text-center">Status</th>
+                                <th class="pe-4 py-3 text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inv in inventories %}
+                            <tr style="border-bottom: 1px solid var(--bs-gray-100);">
+                                <td class="ps-4 py-3 fw-bold text-dark">{{ inv.client.name }}</td>
+                                <td class="py-3 text-secondary" style="max-width: 200px;">{{ inv.description|truncatechars:35 }}</td>
+                                <td class="py-3 text-center font-monospace small">
+                                    {{ inv.collection_date|date:"M d, Y" }}
+                                </td>
+                                <td class="py-3 text-end font-monospace fw-bold" style="color: {% if inv.balance > 0 %}#b02a37{% else %}#198754{% endif %};">
+                                    ₦{{ inv.balance|intcomma }}
+                                </td>
+                                <td class="py-3 text-center">
+                                    {% if inv.paid_fully %}
+                                        <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 0.7rem;">PAID</span>
+                                    {% elif inv.balance > 0 %}
+                                        <span class="badge bg-warning bg-opacity-10 text-warning" style="font-size: 0.7rem;">OWING</span>
+                                    {% endif %}
+                                </td>
+                                <td class="pe-4 py-3 text-end">
+                                    <a href="{% url 'inventory_detail' inv.id %}" class="btn btn-sm btn-dark px-3 rounded-pill">Details</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <p class="text-muted m-0">No active orders assigned to you.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}

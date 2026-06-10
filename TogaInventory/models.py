@@ -4,6 +4,7 @@ from TogaClients.models import Client
 from auditlog.registry import auditlog
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from decimal import Decimal
 
 
 class Inventory(models.Model):
@@ -45,7 +46,7 @@ class Inventory(models.Model):
     )
     amount_deposited = models.DecimalField(
         max_digits=12, decimal_places=2,
-        default=0,
+        default=Decimal("0.00"),
         verbose_name="Amount Deposited"
     )
     deposit_date = models.DateField(
@@ -54,7 +55,7 @@ class Inventory(models.Model):
     )
     balance = models.DecimalField(
         max_digits=12, decimal_places=2,
-        default=0,
+        default=Decimal("0.00"),
         verbose_name="Balance"
     )
 
@@ -114,27 +115,29 @@ class Inventory(models.Model):
     def update_deposit_summary(self):
         """
         Recalculate deposits and balance whenever a new deposit is added
-        or when paid_fully is toggled.
+        or when paid_fully is toggled. Saves pinpointed fields to avoid loop recursion.
         """
-        total = self.deposits.aggregate(Sum('amount'))['amount__sum'] or 0
+        total = self.deposits.aggregate(Sum('amount'))['amount__sum'] or Decimal("0.00")
         self.amount_deposited = total
 
         # If marked paid fully, override balance logic
         if self.paid_fully:
-            self.balance = 0
+            self.balance = Decimal("0.00")
             if not self.paid_fully_date:
-                self.paid_fully_date = timezone.now()
+                self.paid_fully_date = timezone.now().date()
         else:
             self.balance = self.amount_charged - total
             if self.balance <= 0:
                 self.paid_fully = True
+                self.balance = Decimal("0.00")
                 if not self.paid_fully_date:
-                    self.paid_fully_date = timezone.now()
+                    self.paid_fully_date = timezone.now().date()
             else:
                 self.paid_fully = False
                 self.paid_fully_date = None
 
-        self.save()
+        # update_fields isolates the database write and blocks infinite recursion loops
+        self.save(update_fields=["amount_deposited", "balance", "paid_fully", "paid_fully_date"])
 
 
 class Deposit(models.Model):
@@ -156,9 +159,16 @@ class Deposit(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        # After saving deposit, update inventory totals
+        # After saving deposit, update inventory totals safely
         self.inventory.update_deposit_summary()
 
+    def delete(self, *args, **kwargs):
+        inventory = self.inventory
+        super().delete(*args, **kwargs)
+        # Recalculate totals after a transaction entry is removed
+        inventory.update_deposit_summary()
 
-# 🔒 Track changes with auditlog
+
+# 🔒 Track system changes securely with auditlog
 auditlog.register(Inventory)
+auditlog.register(Deposit)

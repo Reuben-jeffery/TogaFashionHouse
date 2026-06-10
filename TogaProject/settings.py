@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'TogaMeasurements',
     'auditlog',
     'django.contrib.humanize',
+    'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'TogaProject.urls'
@@ -80,16 +83,14 @@ WSGI_APPLICATION = 'TogaProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-import os
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('POSTGRES_HOST'),
-        'PORT': os.getenv('POSTGRES_PORT'),
+        'NAME': 'togadb',    
+        'USER': 'togauser',
+        'PASSWORD': '5395',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -150,3 +151,15 @@ EMAIL_HOST_USER = 'reubenofuafoj@gmail.com'
 EMAIL_HOST_PASSWORD = 'vhwo ioft kwtq kizd'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React default
+    "http://localhost:5173",  # Vite default
+]
+
+CORS_ALLOW_ALL_ORIGINS = True

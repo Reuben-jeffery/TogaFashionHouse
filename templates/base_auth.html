@@ -3,21 +3,98 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Toga Fashion House - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toga Fashion House - Access Gate</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f6f5f2; /* Warm, luxury stone background */
+      color: #111111;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .toga-auth-container {
+      max-width: 440px;
+      width: 100%;
+      padding: 2.5rem;
+    }
+
+    .toga-brand-header img {
+      transition: transform 0.3s ease;
+    }
+    
+    .toga-brand-header h2 {
+      font-weight: 800;
+      font-size: 1.5rem;
+      letter-spacing: -0.5px;
+      color: #111111;
+      margin-top: 1rem;
+    }
+
+    .toga-brand-header p {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #7c7c7c;
+      font-weight: 600;
+    }
+
+    /* Standardized styling wrapping child form inputs seamlessly */
+    .toga-card-body-wrapper {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-radius: 16px;
+      padding: 2.25rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+    }
+
+    /* Utility overrides for any forms loaded into this block */
+    .form-control {
+      border: 1px solid #e2e2e2 !important;
+      padding: 0.65rem 1rem;
+      font-size: 0.9rem;
+      border-radius: 8px !important;
+    }
+    .form-control:focus {
+      border-color: #111111 !important;
+      box-shadow: none !important;
+    }
+    .btn-dark {
+      background-color: #111111 !important;
+      border: none !important;
+      padding: 0.65rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px !important;
+    }
+  </style>
 </head>
-<body class="d-flex flex-column justify-content-center align-items-center vh-100 bg-light">
+<body>
 
-  <!-- Logo + Name -->
-  <div class="text-center mb-4">
-    <img src="{% static 'images/image.png' %}" alt="Toga Logo" height="100">
-    <h2 class="mt-2">Toga Fashion House</h2>
-  </div>
+  <div class="toga-auth-container">
+    
+    <div class="toga-brand-header text-center mb-4">
+      <img src="{% static 'images/image.png' %}" alt="Toga Brandmark" height="75" class="mb-2">
+      <h2>Toga Fashion House</h2>
+      <p class="m-0">Management Console Access</p>
+    </div>
 
-  <!-- Page Content -->
-  <div class="container">
-    {% block content %}
-    {% endblock %}
+    <div class="toga-card-body-wrapper">
+      {% block content %}
+      {% endblock %}
+    </div>
+
   </div>
 
 </body>

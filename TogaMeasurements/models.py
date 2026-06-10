@@ -2,22 +2,36 @@ from django.db import models
 from TogaClients.models import Client
 from auditlog.registry import auditlog
 
-class MenMeasurement(models.Model):
-    client = models.ForeignKey(Client, related_name="men_measurements", on_delete=models.CASCADE)
+class BaseMeasurement(models.Model):
+    """
+    Abstract base class to centralize common fields and logic.
+    Provides shared audit timestamps and metadata for all measurement types.
+    """
     date = models.DateField(auto_now_add=True)
-    sh = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Shoulder
-    ch = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Chest
-    nk = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Neck
-    slv = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)  # Sleeve
-    r_slv = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True) # Round Sleeve
-    tl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Top Length
+    tailors_name = models.CharField(max_length=150, blank=True, null=True, verbose_name="Recorded By")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+        ordering = ["-date"]
+
+class MenMeasurement(BaseMeasurement):
+    client = models.ForeignKey(Client, related_name="men_measurements", on_delete=models.CASCADE)
+    
+    # Original field definitions preserved for workflow continuity
+    sh = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    ch = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    nk = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    slv = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    r_slv = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    tl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     hip = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     tom = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     cuff = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    w = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)    # Waist
-    kn = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Knee
-    ft = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Foot
-    trl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)  # Trouser Length
+    w = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    kn = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    ft = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    trl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     laps = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     agb_fl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     agb_sh = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
@@ -49,37 +63,32 @@ class MenMeasurement(models.Model):
     dsk_ch = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     dsk_hip = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
-    tailors_name = models.CharField(max_length=150, blank=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta: 
-        ordering = ["-date"]
-
     def __str__(self):
         return f"Men's Measurement for {self.client.name} ({self.date})"
 
 
-class WomenMeasurement(models.Model):
+class WomenMeasurement(BaseMeasurement):
     client = models.ForeignKey(Client, related_name="women_measurements", on_delete=models.CASCADE)
-    date = models.DateField(auto_now_add=True)
-    sh = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Shoulder
-    b = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)    # Bust
-    bl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Blouse Length
-    ub = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Under Bust
-    sh_bp = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True) # Shoulder-Bust Point
-    tl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Top Length
+    
+    # Original field definitions preserved for workflow continuity
+    sh = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    b = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    bl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    ub = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    sh_bp = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    tl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     offsh = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    skl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)  # Skirt Length
-    slv = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)  # Sleeve
-    rsv = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)  # Round Sleeve
-    ch = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Chest
-    nk = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)   # Neck
+    skl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    slv = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    rsv = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    ch = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    nk = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     laps = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     frt_fl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     sh_w = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    w = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)    # Waist
+    w = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     hip = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    w_floor = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True) # W/FOOR
+    w_floor = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     kn = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     short = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     pen = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
@@ -93,16 +102,15 @@ class WomenMeasurement(models.Model):
     r_ub = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     band = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     jckt_lt = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    r_kn =  models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    r_kn = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     gown_lt = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     short_lt = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     cleavage = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     back_lt = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     cuff = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    acc_b =  models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    acc_b = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     acc_bk = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     bpoint = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    bl = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     skirt_lt = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     h_sh = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     hoodie_lt = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
@@ -122,17 +130,10 @@ class WomenMeasurement(models.Model):
     b_gap = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     round_sh = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     r_neck = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-     
-    tailors_name = models.CharField(max_length=150, blank=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta: 
-        ordering = ["-date"]
-
 
     def __str__(self):
         return f"Women's Measurement for {self.client.name} ({self.date})"
 
-# Register them with auditlog locally
+# Register with auditlog
 auditlog.register(MenMeasurement)
-auditlog.register(WomenMeasurement) 
+auditlog.register(WomenMeasurement)

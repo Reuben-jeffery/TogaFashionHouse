@@ -1,53 +1,138 @@
 {% extends "base_auth.html" %}
 {% load static %}
 {% block content %}
+
 <style>
   body {
-    background: url("{% static 'images/image.png' %}") no-repeat center center fixed;
-    background-size: cover; /* wallpaper effect */
+    background: radial-gradient(circle at 10% 20%, #fbfaf8 0%, #f3f1ec 90%) !important;
+    position: relative;
+    overflow-x: hidden;
   }
-  .overlay {
-    background-color: rgba(0, 0, 0, 0.6); /* dim background with semi-transparent black */
-    border-radius: 8px;
-    color: #fff; /* make text readable on dark background */
+  
+  /* Subtly rendering the brand identity mark as a soft background texture asset */
+  body::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: url("{% static 'images/image.png' %}") no-repeat center center;
+    background-size: contain;
+    opacity: 0.015; /* Keeps it incredibly high-end and non-distracting */
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Structural Card Frame Glassmorphism Adjustments */
+  .toga-login-surface {
+    background: #ffffff !important;
+    border: 1px solid rgba(17, 17, 17, 0.06) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 15px 35px rgba(50, 48, 46, 0.04) !important;
+    width: 100%;
+    max-width: 420px;
+    padding: 1.5rem;
+  }
+
+  /* Form Element Floating Interactivity Fixes */
+  .toga-login-surface .form-floating {
+    position: relative;
+  }
+  .toga-login-surface .form-control {
+    background-color: #faf9f6 !important;
+    border: 1px solid #e6e3dd !important;
+    color: #111111 !important;
+    border-radius: 10px !important;
+    font-size: 0.92rem !important;
+    font-weight: 500 !important;
+    padding-left: 1.25rem !important;
+    height: 56px !important;
+    transition: all 0.2s ease;
+  }
+  .toga-login-surface .form-control:focus {
+    background-color: #ffffff !important;
+    border-color: #111111 !important;
+    box-shadow: none !important;
+  }
+  .toga-login-surface .form-floating > label {
+    padding-left: 1.25rem !important;
+    color: #8c857e !important;
+    font-size: 0.85rem !important;
+    font-weight: 500;
+  }
+  .toga-login-surface .form-control:focus ~ label,
+  .toga-login-surface .form-control:not(:placeholder-shown) ~ label {
+    color: #111111 !important;
+    transform: scale(0.85) translateY(-0.4rem) translateX(0.15rem) !important;
+  }
+
+  /* Core Gate Button Components */
+  .btn-toga-gate {
+    background-color: #111111 !important;
+    border: 1px solid #111111 !important;
+    color: #ffffff !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 10px !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-toga-gate:hover {
+    background-color: #2b2927 !important;
+    border-color: #2b2927 !important;
+    transform: translateY(-1px);
+  }
+  
+  /* Link Utilities */
+  .toga-gate-link {
+    color: #111111 !important;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.15);
+    transition: border-color 0.2s ease;
+  }
+  .toga-gate-link:hover {
+    border-bottom-color: #111111;
   }
 </style>
 
-<div class="d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh;">
+<div class="d-flex flex-column justify-content-center align-items-center px-3" style="min-height: 100vh;">
   
-  <!-- Logo + Name -->
   <div class="text-center mb-4">
-    <img src="{% static 'images/image.png' %}" alt="Toga Logo" height="100">
-    <h2 class="mt-2 text-light">Toga Fashion House</h2>
+    <img src="{% static 'images/image.png' %}" alt="Toga Logo" height="70" class="mb-2" style="mix-blend-mode: multiply;">
+    <h2 class="fw-800 text-dark m-0" style="letter-spacing: -0.5px; font-weight: 800; font-size: 1.5rem;">Toga Fashion House</h2>
+    <p class="text-muted small text-uppercase mt-1 mb-0" style="letter-spacing: 2px; font-size: 0.65rem; font-weight: 600;">Secure Atelier Sign In</p>
   </div>
 
-  <!-- Login Card -->
-  <div class="card shadow-sm border-0 overlay" style="width: 400px;">
-    <div class="card-body">
-      <h3 class="text-center mb-4">Login</h3>
-      <form method="post">
+  <div class="card border-0 toga-login-surface">
+    <div class="card-body p-3">
+      <h4 class="fw-bold text-dark mb-4" style="letter-spacing: -0.3px;">Welcome Back</h4>
+      
+      <form method="post" autocomplete="off">
         {% csrf_token %}
         
-        <!-- Username -->
         <div class="form-floating mb-3">
           <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
-          <label for="username">Username</label>
+          <label for="username">Username or Identity</label>
         </div>
 
-        <!-- Password -->
-        <div class="form-floating mb-3">
+        <div class="form-floating mb-4">
           <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-          <label for="password">Password</label>
+          <label for="password">Security Password</label>
         </div>
 
-        <!-- Submit -->
-        <button type="submit" class="btn btn-primary w-100">Login</button>
+        <button type="submit" class="btn btn-toga-gate w-100 d-flex align-items-center justify-content-center gap-2">
+          Authenticate Access <i class="fa fa-arrow-right small opacity-50"></i>
+        </button>
       </form>
 
-      <p class="text-center mt-3">
-        Don’t have an account? <a href="{% url 'register' %}" class="text-light">Register here</a>
+      <p class="text-center mt-4 mb-1 text-muted small" style="font-weight: 500;">
+        Don’t have an authorized account? <a href="{% url 'register' %}" class="toga-gate-link ms-1">Register here</a>
       </p>
     </div>
   </div>
 </div>
+
 {% endblock %}

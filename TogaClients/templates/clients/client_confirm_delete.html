@@ -1,34 +1,55 @@
 {% extends "base.html" %}
-{% block title %}Delete Client{% endblock %}
+
+{% block title %}Confirm Destructive Deletion — {{ client.name }}{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-  <!-- Page Title -->
-  <h1 class="mb-4 text-center text-danger">
-    <i class="fa fa-user-times me-2"></i> Delete Client
-  </h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8 col-xl-6">
+            
+            <div class="text-center mb-5">
+                <h1 class="h2 mb-2">Archive Client Registry</h1>
+                <p class="text-uppercase tracking-wider small style-gray-muted" style="letter-spacing: 1.5px;">
+                    Account Termination Sequence
+                </p>
+            </div>
 
-  <!-- Confirmation Card -->
-  <div class="card shadow-sm border-0">
-    <div class="card-body text-center">
-      <p class="fs-5 mb-4">
-        Are you sure you want to permanently delete 
-        <strong>{{ client.name }}</strong> ({{ client.phone }}) from your records?
-      </p>
-      <p class="text-muted mb-4">
-        This action cannot be undone. All linked measurements and inventory items will also be removed.
-      </p>
+            <div class="card border-0">
+                <div class="card-body p-4 p-md-5 text-center" style="background-color: var(--bs-gray-100); border-radius: var(--bs-border-radius);">
+                    
+                    <p class="mb-4 text-dark fs-5" style="font-weight: 500;">
+                        Are you sure you want to permanently delete the profile directory for 
+                        <span class="d-block mt-2 h3 text-black font-bold">{{ client.name }}</span>
+                    </p>
+                    
+                    <p class="small text-secondary mb-5" style="line-height: 1.6; max-width: 85%; margin: 0 auto;">
+                        This operation is immediate and irreversible. The system will cleanly purge all associated 
+                        <code style="color: var(--bs-dark); font-weight: 600;">{{ client.phone }}</code> historical measurement sets, 
+                        tailoring files, and linked inventory data logs.
+                    </p>
 
-      <form method="post" class="d-inline">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger me-2">
-          <i class="fa fa-trash me-1"></i> Yes, Delete Client
-        </button>
-      </form>
-      <a href="{% url 'client_detail' client.id %}" class="btn btn-secondary">
-        <i class="fa fa-times me-1"></i> Cancel
-      </a>
+                    <div class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3">
+                        
+                        <form method="post" class="w-100 w-sm-auto m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="btn w-100 px-4 py-2" 
+                                    style="background-color: var(--bs-dark); color: var(--bs-white); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: var(--bs-border-radius); border: 1px solid var(--bs-dark);">
+                                Confirm Deletion
+                            </button>
+                        </form>
+                        
+                        <a href="{% url 'client_detail' client.id %}" 
+                           class="btn w-100 w-sm-auto px-4 py-2" 
+                           style="background-color: transparent; color: var(--bs-gray-700); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: var(--bs-border-radius); border: 1px solid var(--bs-gray-300);">
+                            Cancel & Return
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+            
+        </div>
     </div>
-  </div>
 </div>
 {% endblock %}

@@ -1,175 +1,172 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% load widget_tweaks %}
-{% block title %}Add Inventory{% endblock %}
+
+{% block title %}{% if form.instance.pk %}Edit Order{% else %}New Order{% endif %} — Toga Ledgers{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container py-5">
 
-  <!-- Page Header -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold text-dark">
-      <i class="fa fa-boxes me-2 text-success"></i> Add Inventory
-    </h2>
-    <a href="{% url 'inventory_list' %}" class="btn btn-secondary">
-      <i class="fa fa-arrow-left me-1"></i> Back to Inventories
-    </a>
-  </div>
-
-  <!-- Inventory Form -->
-  <div class="card shadow-sm border-0">
-    <div class="card-body">
-      <form method="post" novalidate>
-        {% csrf_token %}
-
-        {% if form.non_field_errors %}
-          <div class="alert alert-danger">
-            <strong>{{ form.non_field_errors }}</strong>
-          </div>
-        {% endif %}
-
-        <!-- Client Dropdown -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Client</label>
-          {% render_field form.client class+="form-select" %}
-          {% for error in form.client.errors %}
-            <div class="text-danger small">{{ error }}</div>
-          {% endfor %}
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center border-bottom pb-4 mb-5">
+        <div>
+            <span class="text-uppercase tracking-wider small style-gray-muted d-block" style="letter-spacing: 1.5px; font-weight: 600; color: #8c857e; user-select: none;">
+                Order Creation & Modifications
+            </span>
+            <h1 class="h2 text-black font-bold m-0 mt-1" style="letter-spacing: -0.5px;">
+                {% if form.instance.pk %}Update Order Details{% else %}Create New Order{% endif %}
+            </h1>
         </div>
-
-        <!-- Description -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Description</label>
-          {% render_field form.description class+="form-control" %}
-          {% for error in form.description.errors %}
-            <div class="text-danger small">{{ error }}</div>
-          {% endfor %}
+        <div class="mt-3 mt-sm-0">
+            <a href="{% url 'inventory_list' %}" class="btn px-3 py-2 transition-smooth toga-back-btn" 
+               style="background-color: transparent; color: var(--bs-gray-600); font-weight: 600; font-size: 0.8rem; border: 1px solid var(--bs-gray-300); border-radius: var(--bs-border-radius);">
+                ← Return to Order Ledger
+            </a>
         </div>
-
-        <!-- Phone -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Phone</label>
-          {% render_field form.phone class+="form-control" %}
-          {% for error in form.phone.errors %}
-            <div class="text-danger small">{{ error }}</div>
-          {% endfor %}
-        </div>
-
-        <!-- Financials -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Amount Charged (₦)</label>
-          <div class="input-group">
-            <span class="input-group-text">₦</span>
-            {% render_field form.amount_charged class+="form-control currency-input" %}
-          </div>
-          {% for error in form.amount_charged.errors %}
-            <div class="text-danger small">{{ error }}</div>
-          {% endfor %}
-        </div>
-
-        <!-- Dates -->
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label fw-bold">Deposit Date</label>
-            {% render_field form.deposit_date type="date" class+="form-control" %}
-            {% for error in form.deposit_date.errors %}
-              <div class="text-danger small">{{ error }}</div>
-            {% endfor %}
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label fw-bold">Collection Date</label>
-            {% render_field form.collection_date type="date" class+="form-control" %}
-            {% for error in form.collection_date.errors %}
-              <div class="text-danger small">{{ error }}</div>
-            {% endfor %}
-          </div>
-        </div>
-
-        <!-- Personnel -->
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label fw-bold">Received By</label>
-            {% render_field form.received_by class+="form-control" %}
-            {% for error in form.received_by.errors %}
-              <div class="text-danger small">{{ error }}</div>
-            {% endfor %}
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label fw-bold">Cleared By</label>
-            {% render_field form.cleared_by class+="form-control" %}
-            {% for error in form.cleared_by.errors %}
-              <div class="text-danger small">{{ error }}</div>
-            {% endfor %}
-          </div>
-        </div>
-
-        <!-- Status -->
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <div class="form-check">
-              {% render_field form.paid_fully class+="form-check-input" %}
-              <label class="form-check-label fw-bold">Paid Fully?</label>
-            </div>
-            {% for error in form.paid_fully.errors %}
-              <div class="text-danger small">{{ error }}</div>
-            {% endfor %}
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label fw-bold">Paid Fully Date</label>
-            {% render_field form.paid_fully_date type="date" class+="form-control" %}
-            {% for error in form.paid_fully_date.errors %}
-              <div class="text-danger small">{{ error }}</div>
-            {% endfor %}
-          </div>
-        </div>
-
-        <!-- Registration Date -->
-        <div class="mb-3">
-          <label class="form-label fw-bold">Date of Registration</label>
-          {% render_field form.date_of_registration type="date" class+="form-control" %}
-          {% for error in form.date_of_registration.errors %}
-            <div class="text-danger small">{{ error }}</div>
-          {% endfor %}
-        </div>
-
-        <!-- Actions -->
-        <div class="text-center mt-4">
-          <button type="submit" class="btn btn-success me-2">
-            <i class="fa fa-save me-1"></i> Save Inventory
-          </button>
-          <a href="{% url 'inventory_list' %}" class="btn btn-secondary">
-            <i class="fa fa-arrow-left me-1"></i> Cancel
-          </a>
-        </div>
-      </form>
     </div>
-  </div>
 
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-9">
+            <div class="card border-0 p-2 p-md-4" style="background-color: var(--bs-white); border-radius: var(--bs-border-radius);">
+                <div class="card-body p-2">
+                    <form method="post" novalidate class="m-0">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger font-monospace small mb-4" style="border-radius: var(--bs-border-radius);">
+                                <strong>{{ form.non_field_errors }}</strong>
+                            </div>
+                        {% endif %}
+
+                        <h5 class="text-uppercase tracking-wider small mb-3" style="letter-spacing: 1px; font-weight: 700; color: var(--bs-dark); user-select: none;">
+                            Assignment Details
+                        </h5>
+                        
+                        <div class="row g-4 mb-5">
+                            <div class="col-12 col-md-6">
+                                <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.7rem; font-weight: 600; color: var(--bs-gray-600); user-select: none;">Client</label>
+                                {% render_field form.client class="form-select toga-input-field" %}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.7rem; font-weight: 600; color: var(--bs-gray-600); user-select: none;">Phone Number</label>
+                                {% render_field form.phone class="form-control toga-input-field" %}
+                            </div>
+                            <div class="col-12">
+                                <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.7rem; font-weight: 600; color: var(--bs-gray-600); user-select: none;">Garment Description</label>
+                                {% render_field form.description class="form-control toga-input-field" rows="2" %}
+                            </div>
+                        </div>
+
+                        <h5 class="text-uppercase tracking-wider small mb-3" style="letter-spacing: 1px; font-weight: 700; color: var(--bs-dark); user-select: none;">
+                            Financial Parameters
+                        </h5>
+                        
+                        <div class="row g-4 mb-5">
+                            <div class="col-12 col-md-6">
+                                <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.7rem; font-weight: 600; color: var(--bs-gray-600); user-select: none;">Amount Charged (₦)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text font-monospace border-0 bg-transparent pe-2" style="font-weight: 700; color: var(--bs-gray-600);">₦</span>
+                                    {% render_field form.amount_charged class="form-control toga-input-field currency-input" %}
+                                </div>
+                                {% for error in form.amount_charged.errors %}
+                                    <div class="text-danger font-monospace small mt-1" style="font-size: 0.75rem;">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-12 col-md-6 d-flex align-items-center mt-md-5">
+                                <div class="form-check m-0 d-flex align-items-center">
+                                    {% render_field form.paid_fully class="form-check-input style-custom-checkbox" %}
+                                    <label class="form-check-label fw-semibold text-dark small text-uppercase tracking-wider ms-2" style="font-size: 0.7rem; user-select: none; margin-top: 1px;">Order Fully Paid?</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="text-uppercase tracking-wider small mb-3" style="letter-spacing: 1px; font-weight: 700; color: var(--bs-dark); user-select: none;">
+                            Timeline Tracking & Registration
+                        </h5>
+                        
+                        <div class="row g-4 mb-5">
+                            <div class="col-12 col-md-4">
+                                <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.7rem; font-weight: 600; color: var(--bs-gray-600); user-select: none;">Deposit Payment Date</label>
+                                {% render_field form.deposit_date type="date" class="form-control toga-input-field font-monospace" %}
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.7rem; font-weight: 600; color: var(--bs-gray-600); user-select: none;">Collection / Pick-up Date</label>
+                                {% render_field form.collection_date type="date" class="form-control toga-input-field font-monospace" %}
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.7rem; font-weight: 600; color: var(--bs-gray-600); user-select: none;">Completion Payment Date</label>
+                                {% render_field form.paid_fully_date type="date" class="form-control toga-input-field font-monospace" %}
+                            </div>
+                            <div class="col-12">
+                                <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.7rem; font-weight: 600; color: var(--bs-gray-600); user-select: none;">Date of Order Registration</label>
+                                {% render_field form.date_of_registration type="date" class="form-control toga-input-field font-monospace" style="max-width: 320px;" %}
+                            </div>
+                        </div>
+
+                        <h5 class="text-uppercase tracking-wider small mb-3" style="letter-spacing: 1px; font-weight: 700; color: var(--bs-dark); user-select: none;">
+                            Staff Assignments
+                        </h5>
+                        
+                        <div class="row g-4 mb-5">
+                            <div class="col-12 col-md-6">
+                                <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.7rem; font-weight: 600; color: var(--bs-gray-600); user-select: none;">Order Received By</label>
+                                {% render_field form.received_by class="form-control toga-input-field" %}
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.7rem; font-weight: 600; color: var(--bs-gray-600); user-select: none;">Order Handed Out By</label>
+                                {% render_field form.cleared_by class="form-control toga-input-field" %}
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end align-items-center gap-2 pt-4 border-top">
+                            <a href="{% url 'inventory_list' %}" class="btn px-4 py-2 toga-btn-secondary" style="background-color: transparent; color: var(--bs-gray-600); font-weight: 600; font-size: 0.8rem; border: 1px solid var(--bs-gray-200); border-radius: var(--bs-border-radius);">Cancel</a>
+                            <button type="submit" class="btn px-4 py-2 toga-btn-primary" style="background-color: var(--bs-dark); color: var(--bs-white); font-weight: 600; font-size: 0.8rem; border: 1px solid var(--bs-dark); border-radius: var(--bs-border-radius);">Save Order Record</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- JavaScript: format currency inputs -->
+<script src="https://cdn.jsdelivr.net/npm/autonumeric@4.8.0/dist/autoNumeric.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  document.querySelectorAll('.currency-input').forEach(function(input) {
-    if (input.value) {
-      let value = input.value.replace(/,/g, '');
-      if (!isNaN(value) && value !== '') {
-        input.value = new Intl.NumberFormat('en-NG', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        }).format(value);
-      }
+    const input = document.querySelector('.currency-input');
+    if (input) {
+        new AutoNumeric(input, {
+            digitGroupSeparator: ',',
+            decimalCharacter: '.',
+            currencySymbol: '',
+            minimumValue: '0',
+            unformatOnSubmit: true // Ensures clean number sent to Django
+        });
     }
-    input.addEventListener('blur', function(e) {
-      let value = e.target.value.replace(/,/g, '');
-      if (!isNaN(value) && value !== '') {
-        e.target.value = new Intl.NumberFormat('en-NG', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        }).format(value);
-      }
-    });
-  });
 });
 </script>
+
+<style>
+    .toga-input-field {
+        background-color: var(--bs-gray-100) !important;
+        border: 1px solid var(--bs-gray-200) !important;
+        border-radius: var(--bs-border-radius) !important;
+        color: var(--bs-dark) !important;
+        font-size: 0.9rem !important;
+        padding: 0.6rem 0.75rem !important;
+        box-shadow: none !important;
+        transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out !important;
+    }
+    .toga-input-field:focus {
+        background-color: var(--bs-white) !important;
+        border-color: var(--bs-dark) !important;
+    }
+    .style-custom-checkbox {
+        width: 1.1rem !important; height: 1.1rem !important;
+        background-color: var(--bs-gray-200) !important;
+        border: 1px solid var(--bs-gray-300) !important;
+        cursor: pointer;
+    }
+    .style-custom-checkbox:checked { background-color: var(--bs-dark) !important; border-color: var(--bs-dark) !important; }
+    .toga-btn-secondary:hover { background-color: var(--bs-gray-200) !important; color: var(--bs-dark) !important; }
+    .toga-btn-primary:hover { background-color: #403b37 !important; color: var(--bs-white) !important; }
+</style>
 {% endblock %}

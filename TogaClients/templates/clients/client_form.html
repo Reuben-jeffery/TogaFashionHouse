@@ -1,49 +1,115 @@
 {% extends "base.html" %}
 {% load widget_tweaks %}
-{% block title %}Client Form{% endblock %}
+
+{% block title %}{% if form.instance.pk %}Edit Profile{% else %}New Client Profile{% endif %} — Toga Ledgers{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-  <div class="card shadow-sm border-0" style="width: 500px;">
-    <div class="card-body">
-      <h3 class="text-center mb-4 text-primary">
-        {% if form.instance.pk %}
-          <i class="fa fa-edit me-2"></i> Edit Client
-        {% else %}
-          <i class="fa fa-user-plus me-2"></i> Add New Client
-        {% endif %}
-      </h3>
-      
-      <form method="post" novalidate>
-        {% csrf_token %}
-        
-        <!-- Render form fields with Bootstrap floating labels -->
-        {% for field in form %}
-          {% if field.name != "email" %}  <!-- Skip email field -->
-          <div class="form-floating mb-3">
-            {% render_field field class="form-control" %}
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {% if field.errors %}
-              <div class="text-danger small">{{ field.errors }}</div>
-            {% endif %}
-          </div>
-          {% endif %}
-        {% endfor %}
-        
-        <!-- Submit button -->
-        <button type="submit" class="btn btn-success w-100">
-          <i class="fa fa-save me-1"></i> 
-          {% if form.instance.pk %} Update Client {% else %} Save Client {% endif %}
-        </button>
-      </form>
+<div class="modal fade show d-block" tabindex="-1" style="background: rgba(17, 17, 17, 0.45); backdrop-filter: blur(4px);">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content border-0 p-2" style="background-color: var(--bs-white); border-radius: var(--bs-border-radius); box-shadow: 0 20px 40px rgba(0,0,0,0.08);">
+            
+            <div class="modal-header border-0 pb-2 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-uppercase tracking-wider small style-gray-muted d-block" style="letter-spacing: 1.5px; font-weight: 600; color: #8c857e; user-select: none;">
+                        Profile Settings
+                    </span>
+                    <h3 class="h4 text-black font-bold m-0 mt-1">
+                        {% if form.instance.pk %}Update Client Profile{% else %}Create Client Profile{% endif %}
+                    </h3>
+                </div>
+                <button type="button" class="btn-close shadow-none" 
+                        style="font-size: 0.8rem; filter: grayscale(1);" 
+                        onclick="window.location.href='{% url 'client_list' %}'"></button>
+            </div>
 
-      <!-- Back button -->
-      <div class="mt-3 text-center">
-        <a href="{% url 'client_list' %}" class="btn btn-secondary">
-          <i class="fa fa-arrow-left me-1"></i> Back to Clients
-        </a>
-      </div>
+            <div class="modal-body p-4">
+                <form method="post" novalidate class="m-0">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        {% if field.name != "email" and field.name != "notes" %}
+                        <div class="form-group mb-4 position-relative">
+                            <label for="{{ field.id_for_label }}" class="small text-uppercase tracking-wider mb-2 d-block" 
+                                   style="font-size: 0.7rem; font-weight: 600; color: var(--bs-gray-600); user-select: none;">
+                                {{ field.label }}
+                            </label>
+                            
+                            {% render_field field class="form-control toga-input-field" %}
+                            
+                            {% if field.errors %}
+                                <div class="font-monospace small mt-1 text-danger" style="font-size: 0.75rem;">
+                                    {{ field.errors.as_text }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="form-group mb-4">
+                        <label for="notes" class="small text-uppercase tracking-wider mb-2 d-block" 
+                               style="font-size: 0.7rem; font-weight: 600; color: var(--bs-gray-600); user-select: none;">
+                            Client Notes & Preferences
+                        </label>
+                        <textarea name="notes" id="notes" class="form-control toga-input-field" rows="3" 
+                                  placeholder="e.g., Prefers heavy cashmere, specific embroidery positioning, or modern traditional styles...">{{ form.notes.value|default:'' }}</textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-end align-items-center gap-2 pt-3 border-top mt-4">
+                        <a href="{% url 'client_list' %}" class="btn px-4 py-2 toga-btn-secondary" 
+                           style="background-color: transparent; color: var(--bs-gray-600); font-weight: 600; font-size: 0.8rem; border: 1px solid var(--bs-gray-200); border-radius: var(--bs-border-radius);">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn px-4 py-2 toga-btn-primary" 
+                                style="background-color: var(--bs-dark); color: var(--bs-white); font-weight: 600; font-size: 0.8rem; border: 1px solid var(--bs-dark); border-radius: var(--bs-border-radius);">
+                            {% if form.instance.pk %}Save Changes{% else %}Save Profile{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
+
+<style>
+    .modal-content {
+        animation: togaModalReveal 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    
+    @keyframes togaModalReveal {
+        from { transform: translateY(12px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .toga-input-field {
+        background-color: var(--bs-gray-100) !important;
+        border: 1px solid var(--bs-gray-200) !important;
+        border-radius: var(--bs-border-radius) !important;
+        color: var(--bs-dark) !important;
+        font-size: 0.9rem !important;
+        padding: 0.6rem 0.75rem !important;
+        box-shadow: none !important;
+        transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out !important;
+    }
+
+    .toga-input-field:focus {
+        background-color: var(--bs-white) !important;
+        border-color: var(--bs-dark) !important;
+    }
+
+    .toga-btn-secondary, .toga-btn-primary {
+        transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+    }
+
+    .toga-btn-secondary:hover {
+        background-color: var(--bs-gray-200) !important;
+        color: var(--bs-dark) !important;
+        border-color: var(--bs-gray-200) !important;
+    }
+
+    .toga-btn-primary:hover {
+        background-color: #403b37 !important;
+        border-color: #403b37 !important;
+        color: var(--bs-white) !important;
+    }
+</style>
 {% endblock %}

@@ -1,141 +1,227 @@
 {% extends "base.html" %}
-{% block title %}Client Detail{% endblock %}
+
+{% block title %}Client Profile — {{ client.name }}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h1 class="mb-4 text-dark">
-    <i class="fa fa-user me-2 text-primary"></i> {{ client.name }}
-  </h1>
+<div class="container py-5">
 
-  <!-- Client Info -->
-  <div class="card shadow-sm border-0 mb-4">
-    <div class="card-body">
-      <h5 class="card-title"><i class="fa fa-id-card me-2 text-info"></i> Client Information</h5>
-      <p><strong>Phone:</strong> {{ client.phone|default:"—" }}</p>
-      <p><strong>Gender:</strong> {{ client.get_gender_display|default:"—" }}</p>
-      {% if client.last_order_date %}
-        <p><strong>Last Order Date:</strong> {{ client.last_order_date|date:"Y-m-d" }}</p>
-      {% endif %}
-    </div>
-  </div>
-
-  <!-- Inventories -->
-  <div class="card shadow-sm border-0 mb-4">
-    <div class="card-body">
-      <h5 class="card-title"><i class="fa fa-boxes me-2 text-success"></i> Inventories</h5>
-      {% if inventories %}
-        <div class="table-responsive">
-          <table class="table table-sm table-striped align-middle">
-            <thead class="table-success">
-              <tr>
-                <th>Description</th>
-                <th>Amount Charged</th>
-                <th>Deposited</th>
-                <th>Balance</th>
-                <th>Paid Fully</th>
-                <th>Date Registered</th>
-                <th>View</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for inv in inventories %}
-              <tr>
-                <td>{{ inv.description }}</td>
-                <td>{{ inv.amount_charged }}</td>
-                <td>{{ inv.amount_deposited }}</td>
-                <td>{{ inv.balance }}</td>
-                <td>{% if inv.paid_fully %}✅ Yes{% else %}❌ No{% endif %}</td>
-                <td>{{ inv.date_of_registration|date:"Y-m-d" }}</td>
-                <td>
-                  <a href="{% url 'inventory_detail' inv.id %}" class="btn btn-sm btn-info">
-                    <i class="fa fa-eye"></i> View
-                  </a>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-4 mb-5">
+        <div>
+            <span class="text-uppercase tracking-wider small style-gray-muted d-block" style="letter-spacing: 1.5px; font-weight: 600; color: #8c857e; user-select: none;">
+                Atelier Client Profile
+            </span>
+            <h1 class="h2 text-black font-bold m-0 mt-1" style="letter-spacing: -0.5px;">{{ client.name }}</h1>
         </div>
-      {% else %}
-        <p class="text-muted">No inventories recorded yet.</p>
-      {% endif %}
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+            <a href="{% url 'client_edit' client.id %}" class="btn px-3 py-2 transition-smooth" 
+               style="background-color: transparent; color: var(--bs-dark); font-weight: 600; font-size: 0.8rem; border: 1px solid var(--bs-gray-300); border-radius: var(--bs-border-radius);">
+                Edit Profile
+            </a>
+            <a href="{% url 'client_delete' client.id %}" class="btn px-3 py-2 transition-smooth custom-btn-danger" 
+               style="background-color: transparent; color: #b02a37; font-weight: 600; font-size: 0.8rem; border: 1px solid #f5c2c7; border-radius: var(--bs-border-radius);">
+                Delete Account
+            </a>
+        </div>
     </div>
-  </div>
 
-  <!-- Measurements -->
-  <div class="card shadow-sm border-0 mb-4">
-    <div class="card-body">
-      <h5 class="card-title"><i class="fa fa-ruler-combined me-2 text-warning"></i> Measurements</h5>
+    <div class="row g-5">
+        <div class="col-12 col-lg-4">
+            <div class="card border-0 sticky-top" style="background-color: var(--bs-gray-100); border-radius: var(--bs-border-radius); top: 2rem;">
+                <div class="card-body p-4">
+                    <h5 class="text-uppercase tracking-wider small mb-4" style="letter-spacing: 1px; font-weight: 700; color: var(--bs-gray-700); user-select: none;">
+                        Client Information
+                    </h5>
+                    
+                    <div class="mb-4">
+                        <label class="d-block small text-muted text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px; font-weight: 600;">Phone Number</label>
+                        <code class="font-monospace text-dark d-block ps-0" style="font-size: 0.95rem; background: transparent;">{{ client.phone|default:"—" }}</code>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="d-block small text-muted text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px; font-weight: 600;">Gender</label>
+                        <span class="text-dark d-block" style="font-weight: 600; font-size: 0.9rem;">{{ client.get_gender_display|default:"—" }}</span>
+                    </div>
+                    
+                    {% if client.last_order_date %}
+                    <div class="mb-0">
+                        <label class="d-block small text-muted text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px; font-weight: 600;">Last Order Date</label>
+                        <span class="text-dark font-monospace d-block" style="font-size: 0.9rem;">{{ client.last_order_date|date:"Y-m-d" }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-      {% if client.gender == "M" %}
-        <!-- Men’s Measurements -->
-        <h6 class="text-primary"><i class="fa fa-male me-1"></i> Men’s Measurements</h6>
-        {% if men_measurements %}
-          <div class="table-responsive mb-3">
-            <table class="table table-sm table-striped align-middle">
-              <thead class="table-primary">
-                <tr>
-                  <th>Date</th><th>Chest</th><th>Waist</th><th>Hips</th><th>Tailor</th><th>View</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for m in men_measurements %}
-                <tr>
-                  <td>{{ m.date|date:"Y-m-d" }}</td>
-                  <td>{{ m.ch|default:"—" }}</td>
-                  <td>{{ m.w|default:"—" }}</td>
-                  <td>{{ m.hip|default:"—" }}</td>
-                  <td>{{ m.tailors_name|default:"—" }}</td>
-                  <td>
-                    <a href="{% url 'measurement_detail' m.id %}" class="btn btn-sm btn-info">View</a>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        {% else %}
-          <p class="text-muted">No men’s measurements recorded yet.</p>
-        {% endif %}
-      {% elif client.gender == "F" %}
-        <!-- Women’s Measurements -->
-        <h6 class="text-danger"><i class="fa fa-female me-1"></i> Women’s Measurements</h6>
-        {% if women_measurements %}
-          <div class="table-responsive">
-            <table class="table table-sm table-striped align-middle">
-              <thead class="table-danger">
-                <tr>
-                  <th>Date</th><th>Bust</th><th>Waist</th><th>Hips</th><th>Tailor</th><th>View</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for w in women_measurements %}
-                <tr>
-                  <td>{{ w.date|date:"Y-m-d" }}</td>
-                  <td>{{ w.b|default:"—" }}</td>
-                  <td>{{ w.w|default:"—" }}</td>
-                  <td>{{ w.hip|default:"—" }}</td>
-                  <td>{{ w.tailors_name|default:"—" }}</td>
-                  <td>
-                    <a href="{% url 'measurement_detail' w.id %}" class="btn btn-sm btn-info">View</a>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        {% else %}
-          <p class="text-muted">No women’s measurements recorded yet.</p>
-        {% endif %}
-      {% endif %}
+        <div class="col-12 col-lg-8">
+            
+            <div class="card border-0 mb-5 bg-transparent">
+                <div class="card-body p-0">
+                    <h5 class="text-uppercase tracking-wider small mb-3" style="letter-spacing: 1px; font-weight: 700; color: var(--bs-dark); user-select: none;">
+                        Orders & Garments
+                    </h5>
+                    
+                    {% if inventories %}
+                    <div class="table-responsive">
+                        <table class="table align-middle border-0 m-0" style="font-size: 0.9rem;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid var(--bs-gray-200); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--bs-gray-600); user-select: none;">
+                                    <th class="ps-0 py-3 fw-bold">Description</th>
+                                    <th class="py-3 text-end fw-bold">Total Price</th>
+                                    <th class="py-3 text-end fw-bold">Deposit Paid</th>
+                                    <th class="py-3 text-end fw-bold">Balance Due</th>
+                                    <th class="py-3 text-center fw-bold">Status</th>
+                                    <th class="pe-0 py-3 text-end fw-bold">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for inv in inventories %}
+                                <tr style="border-bottom: 1px solid var(--bs-gray-200);">
+                                    <td class="ps-0 py-3 text-dark fw-semibold" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        {{ inv.description }}
+                                    </td>
+                                    <td class="py-3 text-end font-monospace">₦{{ inv.amount_charged }}</td>
+                                    <td class="py-3 text-end font-monospace text-secondary">₦{{ inv.amount_deposited }}</td>
+                                    <td class="py-3 text-end font-monospace" style="font-weight: 600; color: {% if inv.balance > 0 %}#b02a37{% else %}var(--bs-dark){% endif %};">
+                                        ₦{{ inv.balance }}
+                                    </td>
+                                    <td class="py-3 text-center">
+                                        {% if inv.paid_fully %}
+                                            <span style="padding: 0.25rem 0.5rem; background: #eeebe7; color: #2b2927; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; user-select: none;">Fully Paid</span>
+                                        {% else %}
+                                            <span style="padding: 0.25rem 0.5rem; background: #f6f4f0; color: #5c5552; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; user-select: none;">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="pe-0 py-3 text-end">
+                                        <a href="{% url 'inventory_detail' inv.id %}" class="text-dark small toga-inline-link" style="font-weight: 700; text-decoration: none;">View Order →</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="py-4 border-bottom">
+                        <p class="text-muted small m-0 font-monospace">No orders found for this client.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card border-0 bg-transparent">
+                <div class="card-body p-0">
+                    <h5 class="text-uppercase tracking-wider small mb-3" style="letter-spacing: 1px; font-weight: 700; color: var(--bs-dark); user-select: none;">
+                        Sizing & Measurements
+                    </h5>
+
+                    {% if client.gender == "M" %}
+                        {% if men_measurements %}
+                        <div class="table-responsive">
+                            <table class="table align-middle border-0 m-0" style="font-size: 0.9rem;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid var(--bs-gray-200); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--bs-gray-600); user-select: none;">
+                                        <th class="ps-0 py-3 fw-bold">Date Taken</th>
+                                        <th class="py-3 fw-bold">Chest (in)</th>
+                                        <th class="py-3 fw-bold">Waist (in)</th>
+                                        <th class="py-3 fw-bold">Hips (in)</th>
+                                        <th class="py-3 fw-bold">Tailor</th>
+                                        <th class="pe-0 py-3 text-end fw-bold">Link</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for m in men_measurements %}
+                                    <tr style="border-bottom: 1px solid var(--bs-gray-200);">
+                                        <td class="ps-0 py-3 text-dark font-monospace" style="font-weight: 600;">{{ m.date|date:"Y-m-d" }}</td>
+                                        <td class="py-3 font-monospace">{{ m.ch|default:"—" }}</td>
+                                        <td class="py-3 font-monospace">{{ m.w|default:"—" }}</td>
+                                        <td class="py-3 font-monospace">{{ m.hip|default:"—" }}</td>
+                                        <td class="py-3 text-secondary" style="font-size: 0.85rem;">{{ m.tailors_name|default:"—" }}</td>
+                                        <td class="pe-0 py-3 text-end">
+                                            <a href="{% url 'measurement_detail' m.id %}" class="text-dark small toga-inline-link" style="font-weight: 700; text-decoration: none;">View Details</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="py-4 border-bottom">
+                            <p class="text-muted small m-0 font-monospace">No male measurements recorded yet.</p>
+                        </div>
+                        {% endif %}
+
+                    {% elif client.gender == "F" %}
+                        {% if women_measurements %}
+                        <div class="table-responsive">
+                            <table class="table align-middle border-0 m-0" style="font-size: 0.9rem;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid var(--bs-gray-200); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--bs-gray-600); user-select: none;">
+                                        <th class="ps-0 py-3 fw-bold">Date Taken</th>
+                                        <th class="py-3 fw-bold">Bust (in)</th>
+                                        <th class="py-3 fw-bold">Waist (in)</th>
+                                        <th class="py-3 fw-bold">Hips (in)</th>
+                                        <th class="py-3 fw-bold">Tailor</th>
+                                        <th class="pe-0 py-3 text-end fw-bold">Link</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for w in women_measurements %}
+                                    <tr style="border-bottom: 1px solid var(--bs-gray-200);">
+                                        <td class="ps-0 py-3 text-dark font-monospace" style="font-weight: 600;">{{ w.date|date:"Y-m-d" }}</td>
+                                        <td class="py-3 font-monospace">{{ w.b|default:"—" }}</td>
+                                        <td class="py-3 font-monospace">{{ w.w|default:"—" }}</td>
+                                        <td class="py-3 font-monospace">{{ w.hip|default:"—" }}</td>
+                                        <td class="py-3 text-secondary" style="font-size: 0.85rem;">{{ w.tailors_name|default:"—" }}</td>
+                                        <td class="pe-0 py-3 text-end">
+                                            <a href="{% url 'measurement_detail' w.id %}" class="text-dark small toga-inline-link" style="font-weight: 700; text-decoration: none;">View Details</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="py-4 border-bottom">
+                            <p class="text-muted small m-0 font-monospace">No female measurements recorded yet.</p>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
     </div>
-  </div>
 
-  <!-- Back Button -->
-  <div class="text-center">
-    <a href="{% url 'client_list' %}" class="btn btn-secondary">
-      <i class="fa fa-arrow-left me-1"></i> Back to Clients
-    </a>
-  </div>
+    <div class="mt-5 pt-4 border-top">
+        <a href="{% url 'client_list' %}" class="text-uppercase tracking-wider small text-decoration-none toga-back-link d-inline-flex align-items-center" 
+           style="letter-spacing: 1px; font-weight: 700; color: var(--bs-dark); transition: color 0.15s ease-in-out;">
+            ← Return to Directory
+        </a>
+    </div>
+
 </div>
+
+<style>
+    .transition-smooth {
+        transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+    }
+    .btn:hover {
+        background-color: var(--bs-dark) !important;
+        color: var(--bs-white) !important;
+        border-color: var(--bs-dark) !important;
+    }
+    .custom-btn-danger:hover {
+        background-color: #b02a37 !important;
+        color: var(--bs-white) !important;
+        border-color: #b02a37 !important;
+    }
+    .toga-inline-link {
+        transition: color 0.15s ease-in-out;
+    }
+    .toga-inline-link:hover {
+        color: #8c857e !important;
+    }
+    .toga-back-link:hover {
+        color: #8c857e !important;
+    }
+</style>
 {% endblock %}

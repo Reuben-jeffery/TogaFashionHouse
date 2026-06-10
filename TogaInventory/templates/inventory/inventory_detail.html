@@ -1,114 +1,227 @@
 {% extends "base.html" %}
 {% load humanize %}
-{% block title %}Inventory Detail{% endblock %}
+
+{% block title %}Order Details — {{ inventory.client.name }}{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container py-5">
 
-  <!-- Title -->
-  <h2 class="mb-4 text-center text-primary">
-    <i class="fa fa-boxes me-2"></i> Inventory Detail
-  </h2>
-
-  <!-- Card -->
-  <div class="card shadow-sm border-0 p-4">
-    <!-- Client -->
-    <h4 class="text-dark mb-3">
-      <i class="fa fa-user me-2 text-primary"></i>
-      <strong>{{ inventory.client.name }}</strong>
-    </h4>
-
-    <!-- Description -->
-    <p><strong>Description:</strong> {{ inventory.description }}</p>
-
-    <!-- Financials -->
-    <hr>
-    <h5 class="text-secondary fw-bold">Financials</h5>
-    <p><strong>Amount Charged:</strong> ₦{{ inventory.amount_charged|floatformat:2|intcomma }}</p>
-    <p><strong>Amount Deposited:</strong> ₦{{ inventory.amount_deposited|floatformat:2|intcomma }}</p>
-    <p><strong>Balance:</strong> ₦{{ inventory.balance|floatformat:2|intcomma }}</p>
-
-    <!-- Status -->
-    <p><strong>Status:</strong>
-      {% if inventory.paid_fully %}
-        <span class="badge bg-success">Paid Fully</span>
-      {% elif inventory.amount_deposited > 0 %}
-        <span class="badge bg-info text-dark">Partially Paid</span>
-      {% else %}
-        <span class="badge bg-warning text-dark">Pending</span>
-      {% endif %}
-    </p>
-
-    <!-- Dates -->
-    <hr>
-    <h5 class="text-secondary fw-bold">Dates</h5>
-    <p><strong>Deposit Date:</strong> {{ inventory.deposit_date|date:"Y-m-d"|default:"—" }}</p>
-    <p><strong>Paid Fully Date:</strong> {{ inventory.paid_fully_date|date:"Y-m-d"|default:"—" }}</p>
-    <p><strong>Collection Date:</strong> {{ inventory.collection_date|date:"Y-m-d"|default:"—" }}</p>
-    <p><strong>Date Registered:</strong> {{ inventory.date_of_registration|date:"Y-m-d" }}</p>
-
-    <!-- Personnel -->
-    <hr>
-    <h5 class="text-secondary fw-bold">Personnel</h5>
-    <p><strong>Received By:</strong> {{ inventory.received_by|default:"—" }}</p>
-    <p><strong>Cleared By:</strong> {{ inventory.cleared_by|default:"—" }}</p>
-
-    <!-- Deposits -->
-    {% if deposits %}
-      <hr>
-      <h5 class="text-secondary fw-bold">Deposit History</h5>
-      <ul class="list-group mb-3">
-        {% for deposit in deposits %}
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            ₦{{ deposit.amount|floatformat:2|intcomma }}
-            <span class="text-muted small">
-              {{ deposit.date|date:"Y-m-d" }} — {{ deposit.received_by }}
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-4 mb-5">
+        <div>
+            <span class="text-uppercase tracking-wider small style-gray-muted d-block" style="letter-spacing: 1.5px; font-weight: 600; color: #8c857e; user-select: none;">
+                Order Management Ledger
             </span>
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p class="text-muted"><em>No deposits recorded yet.</em></p>
-    {% endif %}
-
-    <!-- Add Deposit Form -->
-    {% if deposit_form %}
-      <hr>
-      <h5 class="text-secondary fw-bold">Add Deposit</h5>
-      <form method="post" action="{% url 'add_deposit' inventory.id %}">
-        {% csrf_token %}
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <label class="form-label fw-bold">Amount (₦)</label>
-            {{ deposit_form.amount }}
-          </div>
-          <div class="col-md-4 mb-3">
-            <label class="form-label fw-bold">Date</label>
-            {{ deposit_form.date }}
-          </div>
-          <div class="col-md-4 mb-3">
-            <label class="form-label fw-bold">Received By</label>
-            {{ deposit_form.received_by }}
-          </div>
+            <h1 class="h2 text-black font-bold m-0 mt-1" style="letter-spacing: -0.5px;">Order Details</h1>
         </div>
-        <button type="submit" class="btn btn-success">
-          <i class="fa fa-plus"></i> Add Deposit
-        </button>
-      </form>
-    {% endif %}
-  </div>
+        
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+            <a href="{% url 'inventory_edit' inventory.id %}" class="btn px-3 py-2 transition-smooth" 
+               style="background-color: transparent; color: var(--bs-dark); font-weight: 600; font-size: 0.8rem; border: 1px solid var(--bs-gray-300); border-radius: var(--bs-border-radius);">
+                Edit Order
+            </a>
+            {% if not inventory.paid_fully %}
+            <a href="{% url 'inventory_mark_paid' inventory.id %}" class="btn px-3 py-2 transition-smooth custom-btn-success" 
+               style="background-color: transparent; color: #198754; font-weight: 600; font-size: 0.8rem; border: 1px solid #a3cfbb; border-radius: var(--bs-border-radius);">
+                Mark As Fully Paid
+            </a>
+            {% endif %}
+        </div>
+    </div>
 
-  <!-- Actions -->
-  <div class="mt-3 text-center">
-    <a href="{% url 'inventory_edit' inventory.id %}" class="btn btn-warning me-2">
-      <i class="fa fa-edit"></i> Edit
-    </a>
-    <a href="{% url 'inventory_mark_paid' inventory.id %}" class="btn btn-success me-2">
-      <i class="fa fa-check"></i> Mark Paid Fully
-    </a>
-    <a href="{% url 'inventory_list' %}" class="btn btn-secondary">
-      <i class="fa fa-arrow-left"></i> Back to List
-    </a>
-  </div>
+    <div class="row g-5">
+        <div class="col-12 col-lg-7">
+            <div class="card border-0 mb-4 bg-transparent">
+                <div class="card-body p-0">
+                    
+                    <div class="mb-4">
+                        <label class="d-block small text-muted text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px; font-weight: 600;">Client Assignment</label>
+                        <h4 class="text-dark fw-bold m-0">{{ inventory.client.name }}</h4>
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="d-block small text-muted text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px; font-weight: 600;">Garment Description</label>
+                        <p class="text-dark m-0" style="font-size: 1.05rem; line-height: 1.6;">{{ inventory.description }}</p>
+                    </div>
+
+                    <h5 class="text-uppercase tracking-wider small mb-3" style="letter-spacing: 1px; font-weight: 700; color: var(--bs-dark); user-select: none;">
+                        Financial Breakdown
+                    </h5>
+                    
+                    <div class="row g-3 mb-5 p-4 rounded" style="background-color: var(--bs-gray-100);">
+                        <div class="col-6 col-md-3">
+                            <label class="d-block small text-muted text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Total Price</label>
+                            <span class="text-dark font-monospace fw-semibold" style="font-size: 1rem;">₦{{ inventory.amount_charged|floatformat:2|intcomma }}</span>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="d-block small text-muted text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Total Deposits</label>
+                            <span class="text-secondary font-monospace" style="font-size: 1rem;">₦{{ inventory.amount_deposited|floatformat:2|intcomma }}</span>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="d-block small text-muted text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Balance Due</label>
+                            <span class="font-monospace fw-bold" style="font-size: 1rem; color: {% if inventory.balance > 0 %}#b02a37{% else %}var(--bs-dark){% endif %};">
+                                ₦{{ inventory.balance|floatformat:2|intcomma }}
+                            </span>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="d-block small text-muted text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Payment Status</label>
+                            {% if inventory.paid_fully %}
+                                <span class="d-inline-block mt-1" style="padding: 0.2rem 0.5rem; background: #eeebe7; color: #2b2927; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Fully Paid</span>
+                            {% elif inventory.amount_deposited > 0 %}
+                                <span class="d-inline-block mt-1" style="padding: 0.2rem 0.5rem; background: #e6f2ff; color: #004085; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Partial</span>
+                            {% else %}
+                                <span class="d-inline-block mt-1" style="padding: 0.2rem 0.5rem; background: #f6f4f0; color: #5c5552; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Unpaid</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <h5 class="text-uppercase tracking-wider small mb-3" style="letter-spacing: 1px; font-weight: 700; color: var(--bs-dark); user-select: none;">
+                        Timeline & Dates
+                    </h5>
+                    <div class="row g-4 mb-4">
+                        <div class="col-6 col-md-3">
+                            <label class="d-block small text-muted text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">Date Created</label>
+                            <span class="text-dark font-monospace small">{{ inventory.date_of_registration|date:"Y-m-d" }}</span>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="d-block small text-muted text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">Initial Deposit</label>
+                            <span class="text-dark font-monospace small">{{ inventory.deposit_date|date:"Y-m-d"|default:"—" }}</span>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="d-block small text-muted text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">Completion Date</label>
+                            <span class="text-dark font-monospace small">{{ inventory.paid_fully_date|date:"Y-m-d"|default:"—" }}</span>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="d-block small text-muted text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">Collection Date</label>
+                            <span class="text-dark font-monospace small fw-semibold">{{ inventory.collection_date|date:"Y-m-d"|default:"—" }}</span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" style="border-color: var(--bs-gray-300);">
+
+                    <div class="row g-4">
+                        <div class="col-6">
+                            <label class="d-block small text-muted text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Order Received By</label>
+                            <span class="text-secondary small font-monospace">{{ inventory.received_by|default:"—" }}</span>
+                        </div>
+                        <div class="col-6">
+                            <label class="d-block small text-muted text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Order Handed Out By</label>
+                            <span class="text-secondary small font-monospace">{{ inventory.cleared_by|default:"—" }}</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-5">
+            
+            <div class="card border-0 mb-5 bg-transparent">
+                <div class="card-body p-0">
+                    <h5 class="text-uppercase tracking-wider small mb-3" style="letter-spacing: 1px; font-weight: 700; color: var(--bs-dark); user-select: none;">
+                        Deposit Payment History
+                    </h5>
+                    
+                    {% if deposits %}
+                        <div class="list-group list-group-flush border-top border-bottom">
+                            {% for deposit in deposits %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center bg-transparent py-3 px-0 border-start-0 border-end-0">
+                                    <span class="font-monospace fw-semibold text-dark">₦{{ deposit.amount|floatformat:2|intcomma }}</span>
+                                    <span class="text-muted small font-monospace" style="font-size: 0.8rem;">
+                                        {{ deposit.date|date:"Y-m-d" }} &middot; {{ deposit.received_by }}
+                                    </span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="py-3 border-bottom">
+                            <p class="text-muted small m-0 font-monospace">No individual deposits recorded for this order transaction.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if deposit_form %}
+            <div class="card border-0 p-4" style="background-color: var(--bs-gray-100); border-radius: var(--bs-border-radius);">
+                <div class="card-body p-1">
+                    <h5 class="text-uppercase tracking-wider small mb-3" style="letter-spacing: 1px; font-weight: 700; color: var(--bs-gray-700); user-select: none;">
+                        Record New Deposit Payment
+                    </h5>
+                    
+                    <form method="post" action="{% url 'add_deposit' inventory.id %}" class="m-0">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.65rem; font-weight: 600; color: var(--bs-gray-600);">Amount (₦)</label>
+                            {{ deposit_form.amount }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.65rem; font-weight: 600; color: var(--bs-gray-600);">Payment Date</label>
+                            {{ deposit_form.date }}
+                        </div>
+                        <div class="mb-4">
+                            <label class="small text-uppercase tracking-wider mb-2 d-block" style="font-size: 0.65rem; font-weight: 600; color: var(--bs-gray-600);">Received By</label>
+                            {{ deposit_form.received_by }}
+                        </div>
+                        <button type="submit" class="btn w-100 py-2 toga-btn-primary" 
+                                style="background-color: var(--bs-dark); color: var(--bs-white); font-weight: 600; font-size: 0.8rem; border: 1px solid var(--bs-dark); border-radius: var(--bs-border-radius);">
+                            Add Payment Entry
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <div class="mt-5 pt-4 border-top">
+        <a href="{% url 'inventory_list' %}" class="text-uppercase tracking-wider small text-decoration-none toga-back-link d-inline-flex align-items-center" 
+           style="letter-spacing: 1px; font-weight: 700; color: var(--bs-dark); transition: color 0.15s ease-in-out;">
+            ← Return to Order Ledger
+        </a>
+    </div>
+
 </div>
+
+<style>
+    /* Synchronized Widget Inputs Injection Classes */
+    input, select {
+        display: block;
+        width: 100%;
+        background-color: var(--bs-white) !important;
+        border: 1px solid var(--bs-gray-300) !important;
+        border-radius: var(--bs-border-radius) !important;
+        color: var(--bs-dark) !important;
+        font-size: 0.85rem !important;
+        padding: 0.5rem 0.75rem !important;
+        box-shadow: none !important;
+        transition: border-color 0.15s ease-in-out !important;
+    }
+    input:focus, select:focus {
+        border-color: var(--bs-dark) !important;
+        outline: none;
+    }
+    .transition-smooth {
+        transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+    }
+    .btn:hover {
+        background-color: var(--bs-dark) !important;
+        color: var(--bs-white) !important;
+        border-color: var(--bs-dark) !important;
+    }
+    .custom-btn-success:hover {
+        background-color: #198754 !important;
+        color: var(--bs-white) !important;
+        border-color: #198754 !important;
+    }
+    .toga-btn-primary {
+        transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+    .toga-btn-primary:hover {
+        background-color: #403b37 !important;
+        border-color: #403b37 !important;
+    }
+    .toga-back-link:hover {
+        color: #8c857e !important;
+    }
+</style>
 {% endblock %}

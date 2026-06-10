@@ -3,3 +3,9 @@ __pycache__/
 db.sqlite3
 togaenv/
 .env
+db.sqlite3
+__pycache__/
+*.pyc
+media/
+.env
+venv/

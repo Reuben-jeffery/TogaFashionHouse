@@ -1,160 +1,127 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% load static %}
-{% block title %}Worker Dashboard{% endblock %}
+{% block title %}Toga Fashion House | Console{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container-fluid py-5" style="background-color: #fdfcf9; min-height: 100vh;">
 
-  <!-- Logo + Name Heading -->
-  <div class="d-flex justify-content-center align-items-center mb-4">
-    <img src="{% static 'images/image.png' %}" alt="Toga Logo" height="60" class="me-3">
-    <h1 class="text-dark mb-0">Toga Fashion House</h1>
-  </div>
-
-  <!-- Summary Cards -->
-  <div class="row g-4">
-    <!-- Clients Card -->
-    <div class="col-md-4">
-      <a href="{% url 'client_list' %}" class="text-decoration-none">
-        <div class="card shadow-sm border-0 text-center h-100">
-          <div class="card-body">
-            <i class="fa fa-users fa-2x text-primary"></i>
-            <h6 class="mt-2 text-muted">Clients</h6>
-            <h3 class="fw-bold">{{ client_count }}</h3>
-          </div>
+    <div class="text-center mb-5">
+        <div class="mb-3">
+            <img src="{% static 'images/image.png' %}" alt="Toga Logo" height="80" class="shadow-sm rounded-circle">
         </div>
-      </a>
+        <h1 class="display-5 fw-extrabold text-dark mb-2" style="letter-spacing: -1.5px;">Toga Fashion House</h1>
+        <div class="d-flex justify-content-center align-items-center gap-3">
+            <span style="width: 40px; height: 1px; background: #e0dcd7;"></span>
+            <span class="text-uppercase text-muted" style="letter-spacing: 4px; font-size: 0.75rem; font-weight: 700;">Atelier Performance Console</span>
+            <span style="width: 40px; height: 1px; background: #e0dcd7;"></span>
+        </div>
     </div>
 
-    <!-- Inventory Card -->
-    <div class="col-md-4">
-      <a href="{% url 'inventory_list' %}" class="text-decoration-none">
-        <div class="card shadow-sm border-0 text-center h-100">
-          <div class="card-body">
-            <i class="fa fa-box fa-2x text-warning"></i>
-            <h6 class="mt-2 text-muted">Inventory Records</h6>
-            <h3 class="fw-bold">{{ inventory_count }}</h3>
-            <p class="small text-muted mb-0">Unpaid: {{ upcoming_due.count }}</p>
-          </div>
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card border-0 h-100 p-4 rounded-4 shadow-sm bg-white">
+                <h6 class="text-uppercase text-muted fw-bold small" style="letter-spacing: 1.5px;">Active Clients</h6>
+                <h2 class="display-5 fw-bold my-3">{{ client_count }}</h2>
+                <span class="text-success small fw-semibold"><i class="fa fa-trending-up me-1"></i> Client records updated</span>
+            </div>
         </div>
-      </a>
+        
+        <div class="col-md-4">
+            <div class="card border-0 h-100 p-4 rounded-4 shadow-sm" style="background: #111111; color: white;">
+                <h6 class="text-uppercase text-white-50 fw-bold small" style="letter-spacing: 1.5px;">Outstanding Bal.</h6>
+                <h2 class="display-5 fw-bold my-3">₦{{ total_outstanding|intcomma }}</h2>
+                <a href="{% url 'inventory_list' %}" class="text-white small text-decoration-underline">Review pending ledgers →</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 h-100 p-4 rounded-4 shadow-sm bg-white">
+                <h6 class="text-uppercase text-muted fw-bold small" style="letter-spacing: 1.5px;">Measurement Logs</h6>
+                <h2 class="display-5 fw-bold my-3">{{ measurement_count }}</h2>
+                <div class="d-flex gap-3 text-muted small">
+                    <span>👔 {{ men_measurement_count }} Men</span>
+                    <span>👗 {{ women_measurement_count }} Women</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Measurements Card -->
-    <div class="col-md-4">
-      <a href="{% url 'measurement_list' %}" class="text-decoration-none">
-        <div class="card shadow-sm border-0 text-center h-100">
-          <div class="card-body">
-            <i class="fa fa-ruler-combined fa-2x text-info"></i>
-            <h6 class="mt-2 text-muted">Measurements</h6>
-            <h3 class="fw-bold">{{ measurement_count }}</h3>
-            <p class="small text-muted mb-0">
-              Men: {{ men_measurement_count }} | Women: {{ women_measurement_count }}
-            </p>
-          </div>
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 rounded-4 p-4 shadow-sm bg-white h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold m-0"><i class="fa fa-clock text-dark me-2"></i> Immediate Collections</h5>
+                    <span class="badge bg-dark rounded-pill px-3">{{ upcoming_due.count }} pending</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="text-muted text-uppercase small">
+                            <tr>
+                                <th>Client</th>
+                                <th class="text-end">Balance</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inv in upcoming_due %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-weight:700; border: 1px solid #eee;">{{ inv.client.name|slice:":1" }}</div>
+                                        <div>
+                                            <div class="fw-bold text-dark">{{ inv.client.name }}</div>
+                                            <small class="text-muted">{{ inv.description|truncatechars:25 }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-end fw-bold">₦{{ inv.balance|floatformat:0|intcomma }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'inventory_detail' inv.id %}" class="btn btn-sm btn-outline-dark rounded-pill px-3">View</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3" class="text-center py-5 text-muted">All clear! No collections due.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </a>
-    </div>
-  </div>
 
-  <!-- Upcoming Due Inventories -->
-  {% if upcoming_due %}
-  <div class="row mt-5">
-    <div class="col-12">
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
-          <h5 class="card-title text-danger">
-            <i class="fa fa-exclamation-circle me-2"></i> Upcoming Collections (Unpaid)
-          </h5>
-          <ul class="list-group list-group-flush">
-            {% for inv in upcoming_due %}
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                <span>
-                  <strong>{{ inv.client.name }}</strong> — {{ inv.description }}
-                  <br>
-                  <small class="text-muted">Collection: {{ inv.collection_date|date:"Y-m-d" }}</small>
-                </span>
-                <span>
-                  {% if inv.paid_fully %}
-                    <span class="badge bg-success">Paid Fully</span>
-                  {% elif inv.amount_deposited > 0 %}
-                    <span class="badge bg-info text-dark">Partially Paid</span>
-                  {% else %}
-                    <span class="badge bg-warning text-dark">Pending</span>
-                  {% endif %}
-                  <span class="badge bg-danger ms-2">
-                    Balance: ₦{{ inv.balance|floatformat:2|intcomma }}
-                  </span>
-                  <a href="{% url 'inventory_detail' inv.id %}" class="btn btn-sm btn-outline-primary ms-2">
-                    View
-                  </a>
-                  <a href="{% url 'inventory_mark_paid' inv.id %}" class="btn btn-sm btn-outline-success ms-2">
-                    Mark Paid
-                  </a>
-                </span>
-              </li>
-            {% endfor %}
-          </ul>
+        <div class="col-lg-4">
+            <div class="card border-0 rounded-4 p-4 shadow-sm bg-white h-100">
+                <h6 class="text-uppercase fw-bold text-muted mb-4" style="letter-spacing: 1px; font-size: 0.75rem;">Inventory Distribution</h6>
+                <canvas id="inventoryChart" style="max-height: 250px;"></canvas>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  {% endif %}
-
-  <!-- Charts Section -->
-  <div class="row mt-5">
-    <div class="col-md-6">
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
-          <h5 class="card-title">Inventories per Client</h5>
-          <canvas id="inventoriesChart"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
-          <h5 class="card-title">Inventory Levels</h5>
-          <canvas id="inventoryChart"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
-<!-- Chart.js Scripts -->
-<script>
-  // Inventories per Client Chart
-  const inventoriesCtx = document.getElementById('inventoriesChart').getContext('2d');
-  new Chart(inventoriesCtx, {
-    type: 'line',
-    data: {
-      labels: {{ chart_labels|safe }},
-      datasets: [{
-        label: 'Inventories',
-        data: {{ chart_data|safe }},
-        borderColor: '#0d6efd',
-        backgroundColor: 'rgba(13,110,253,0.2)',
-        fill: true,
-        tension: 0.3
-      }]
-    }
-  });
+<style>
+    .card { transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid rgba(0,0,0,0.03); }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.07) !important; }
+</style>
 
-  // Inventory Chart
-  const inventoryCtx = document.getElementById('inventoryChart').getContext('2d');
-  new Chart(inventoryCtx, {
-    type: 'bar',
-    data: {
-      labels: {{ inventory_labels|safe }},
-      datasets: [{
-        label: 'Quantity',
-        data: {{ inventory_counts|safe }},
-        backgroundColor: ['#198754', '#0dcaf0', '#ffc107'] // green, blue, orange
-      }]
-    }
-  });
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('inventoryChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ inventory_labels|safe }},
+            datasets: [{
+                data: {{ inventory_counts|safe }},
+                backgroundColor: '#111111',
+                borderRadius: 6
+            }]
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } } 
+        }
+    });
 </script>
 {% endblock %}
