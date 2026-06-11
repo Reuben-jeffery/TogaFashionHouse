@@ -31,13 +31,17 @@ def register(request):
 def is_admin(user):
     return user.is_superuser or user.groups.filter(name="Admin").exists()
 
-# This ensures the code only runs if the User model is ready
-def create_initial_admin():
+def home_view(request):
+    # 1. Ensure Admin exists
     if not User.objects.filter(username='admin').exists():
         User.objects.create_superuser('admin', 'admin@togafashionhouse.com', 'TogaSecure2026!')
-
-# Run it once when the module loads
-create_initial_admin()
+    
+    # 2. If they are already logged in, send them to the dashboard
+    if request.user.is_authenticated:
+        return redirect('dashboard_router')
+    
+    # 3. If they are not logged in, show the login page
+    return redirect('login')
 
 @login_required
 def dashboard(request):

@@ -33,5 +33,6 @@ urlpatterns = [
     path("roles/", project_views.role_list, name="role_list"),
     path('', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('', views.home_view, name='home'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
