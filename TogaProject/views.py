@@ -105,7 +105,6 @@ def role_list(request):
 
 @login_required
 def dashboard_router(request):
-    if is_admin(request.user):
+    if request.user.is_superuser or request.user.groups.filter(name="Admin").exists():
         return redirect('admin_dashboard')
-    else:
-        return redirect('worker_dashboard')
+    return redirect('worker_dashboard')
