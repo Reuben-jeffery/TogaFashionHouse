@@ -9,6 +9,7 @@ from django.utils.safestring import mark_safe
 from django.utils import timezone
 from datetime import timedelta
 import json
+from django.apps import apps
 
 from TogaClients.models import Client
 from TogaInventory.models import Inventory
@@ -29,6 +30,14 @@ def register(request):
 # --- Dashboard Logic ---
 def is_admin(user):
     return user.is_superuser or user.groups.filter(name="Admin").exists()
+
+# This ensures the code only runs if the User model is ready
+def create_initial_admin():
+    if not User.objects.filter(username='admin').exists():
+        User.objects.create_superuser('admin', 'admin@togafashionhouse.com', 'TogaSecure2026!')
+
+# Run it once when the module loads
+create_initial_admin()
 
 @login_required
 def dashboard(request):
