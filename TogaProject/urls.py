@@ -47,6 +47,7 @@ urlpatterns = [
     path("worker/dashboard/", views.worker_dashboard, name="worker_dashboard"),
     
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('dashboard/', views.dashboard, name='dashboard'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 

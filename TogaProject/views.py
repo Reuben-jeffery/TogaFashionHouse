@@ -102,3 +102,10 @@ def admin_dashboard(request):
 @login_required
 def role_list(request):
     return render(request, "roles/role_list.html", {"roles": []})
+
+@login_required
+def dashboard_router(request):
+    if is_admin(request.user):
+        return redirect('admin_dashboard')
+    else:
+        return redirect('worker_dashboard')
