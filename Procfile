@@ -1,1 +1,1 @@
-web: gunicorn TogaProject.wsgi:application
+web: python -m gunicorn TogaProject.wsgi:application --bind 0.0.0.0:$PORT
