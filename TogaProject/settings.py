@@ -154,3 +154,18 @@ if IS_PRODUCTION:
 else:
     DEBUG = True
     # Use local SQLite settings here
+    
+    
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
