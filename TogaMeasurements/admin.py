@@ -1,26 +1,28 @@
 from django.contrib import admin
 from .models import MenMeasurement, WomenMeasurement
 
-# Helper to avoid repeating logic
 class BaseMeasurementAdmin(admin.ModelAdmin):
-    list_display = ("client", "date", "tailors_name")
-    search_fields = ("client__name", "tailors_name")
-    list_filter = ("date", "tailors_name")
-    readonly_fields = ("date",) # Prevent accidental date changes
+    # Updated: Changed 'tailors_name' to 'tailor_name'
+    list_display = ("client", "date", "tailor_name", "created_by")
+    search_fields = ("client__name", "tailor_name")
+    list_filter = ("date", "tailor_name")
+    readonly_fields = ("date", "created_by") # Added created_by here as it's set by the system
     
-    # Organize fields into logical groups for better UI
-    fieldsets = (
-        ('Basic Info', {
-            'fields': ('client', 'tailors_name', 'date')
-        }),
-        ('Body Measurements', {
-            'classes': ('collapse',), # Keeps it hidden by default to declutter
-            'fields': tuple(
-                [f.name for f in MenMeasurement._meta.fields 
-                 if f.name not in ['id', 'client', 'tailors_name', 'date', 'updated_at']]
-            )
-        }),
-    )
+    # Helper to exclude fields we don't want to list in fieldsets
+    def get_fieldsets(self, request, obj=None):
+        # Dynamically get field names, excluding system/auto fields
+        all_fields = [f.name for f in self.model._meta.fields 
+                      if f.name not in ['id', 'updated_at']]
+        
+        return (
+            ('Basic Info', {
+                'fields': ('client', 'tailor_name', 'date', 'created_by')
+            }),
+            ('Body Measurements', {
+                'classes': ('collapse',),
+                'fields': [f for f in all_fields if f not in ['client', 'tailor_name', 'date', 'created_by']]
+            }),
+        )
 
 @admin.register(MenMeasurement)
 class MenMeasurementAdmin(BaseMeasurementAdmin):

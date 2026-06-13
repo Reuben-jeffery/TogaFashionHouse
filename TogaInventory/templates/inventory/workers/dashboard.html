@@ -11,7 +11,7 @@
             <span class="text-uppercase tracking-wider small d-block" style="letter-spacing: 1.5px; font-weight: 600; color: #8c857e;">
                 Worker Operational Console
             </span>
-            <h1 class="h2 text-black font-bold m-0 mt-1">My Assigned Orders</h1>
+            <h1 class="h2 text-black fw-bold m-0 mt-1">My Assigned Orders</h1>
         </div>
     </div>
 
@@ -20,32 +20,41 @@
             {% if inventories %}
                 <div class="table-responsive">
                     <table class="table align-middle border-0 m-0" style="font-size: 0.9rem;">
-                        <thead>
-                            <tr style="background-color: #fcfcfc; border-bottom: 2px solid var(--bs-gray-200); font-size: 0.75rem; text-transform: uppercase; color: var(--bs-gray-600);">
-                                <th class="ps-4 py-3">Client</th>
-                                <th class="py-3">Description</th>
-                                <th class="py-3 text-center">Collection Date</th>
-                                <th class="py-3 text-end">Balance Due</th>
-                                <th class="py-3 text-center">Status</th>
-                                <th class="pe-4 py-3 text-end">Action</th>
+                        <thead class="table-light">
+                            <tr style="font-size: 0.75rem; text-transform: uppercase; color: var(--bs-gray-600);">
+                                <th scope="col" class="ps-4 py-3">Client</th>
+                                <th scope="col" class="py-3">Description</th>
+                                <th scope="col" class="py-3 text-center">Collection Date</th>
+                                <th scope="col" class="py-3 text-end">Balance Due</th>
+                                <th scope="col" class="py-3 text-center">Status</th>
+                                <th scope="col" class="pe-4 py-3 text-end">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for inv in inventories %}
                             <tr style="border-bottom: 1px solid var(--bs-gray-100);">
-                                <td class="ps-4 py-3 fw-bold text-dark">{{ inv.client.name }}</td>
-                                <td class="py-3 text-secondary" style="max-width: 200px;">{{ inv.description|truncatechars:35 }}</td>
-                                <td class="py-3 text-center font-monospace small">
-                                    {{ inv.collection_date|date:"M d, Y" }}
+                                <td class="ps-4 py-3 fw-bold text-dark">{{ inv.client.name|default:"Unknown Client" }}</td>
+                                <td class="py-3 text-secondary" style="max-width: 200px;">
+                                    {{ inv.description|truncatechars:35|default:"No description" }}
                                 </td>
-                                <td class="py-3 text-end font-monospace fw-bold" style="color: {% if inv.balance > 0 %}#b02a37{% else %}#198754{% endif %};">
-                                    ₦{{ inv.balance|intcomma }}
+                                <td class="py-3 text-center font-monospace small">
+                                    {% if inv.collection_date %}
+                                        {{ inv.collection_date|date:"M d, Y" }}
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                                <td class="py-3 text-end font-monospace fw-bold" 
+                                    style="color: {% if inv.balance > 0 %}#b02a37{% else %}#198754{% endif %};">
+                                    ₦{{ inv.balance|default:0|intcomma }}
                                 </td>
                                 <td class="py-3 text-center">
                                     {% if inv.paid_fully %}
                                         <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 0.7rem;">PAID</span>
                                     {% elif inv.balance > 0 %}
                                         <span class="badge bg-warning bg-opacity-10 text-warning" style="font-size: 0.7rem;">OWING</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary" style="font-size: 0.7rem;">PENDING</span>
                                     {% endif %}
                                 </td>
                                 <td class="pe-4 py-3 text-end">
@@ -58,7 +67,8 @@
                 </div>
             {% else %}
                 <div class="text-center py-5">
-                    <p class="text-muted m-0">No active orders assigned to you.</p>
+                    <i class="bi bi-inbox text-muted" style="font-size: 2rem;"></i>
+                    <p class="text-muted m-0 mt-2">No active orders assigned to you.</p>
                 </div>
             {% endif %}
         </div>

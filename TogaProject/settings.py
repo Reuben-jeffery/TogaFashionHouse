@@ -144,3 +144,13 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# This checks if you are on Render by looking for a specific variable
+IS_PRODUCTION = os.getenv('RENDER') == 'true'
+
+if IS_PRODUCTION:
+    DEBUG = False
+    # Use production database settings here
+else:
+    DEBUG = True
+    # Use local SQLite settings here

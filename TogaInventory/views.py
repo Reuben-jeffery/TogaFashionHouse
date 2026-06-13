@@ -75,14 +75,15 @@ def inventory_delete(request, inventory_id):
 # ---------------- WORKER DASHBOARD ---------------- #
 
 @login_required
+@login_required
 def worker_dashboard(request):
-    # Filter by user and balance
     inventories = Inventory.objects.filter(created_by=request.user)
     upcoming_due = inventories.filter(
         collection_date__lte=timezone.now() + timedelta(days=3),
         balance__gt=0
     )
-    return render(request, "workers/dashboard.html", {
+    # This path MUST match the directory structure inside TogaInventory/templates/
+    return render(request, "inventory/workers/dashboard.html", {
         "inventories": inventories,
         "upcoming_due": upcoming_due,
     })

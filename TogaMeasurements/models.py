@@ -1,15 +1,33 @@
 from django.db import models
+from django.contrib.auth.models import User
 from TogaClients.models import Client
 from auditlog.registry import auditlog
 
 class BaseMeasurement(models.Model):
     """
     Abstract base class to centralize common fields and logic.
-    Provides shared audit timestamps and metadata for all measurement types.
     """
     date = models.DateField(auto_now_add=True)
-    tailors_name = models.CharField(max_length=150, blank=True, null=True, verbose_name="Recorded By")
     updated_at = models.DateTimeField(auto_now=True)
+    
+    # Automated system tracking (Who used the computer)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        editable=False,
+        related_name="%(class)s_created",
+        verbose_name="System User"
+    )
+    
+    # Manual tailor entry (Who physically took the measurement)
+    tailor_name = models.CharField(
+        max_length=150, 
+        blank=True, 
+        null=True, 
+        verbose_name="Tailor Name"
+    )
 
     class Meta:
         abstract = True
